@@ -53,6 +53,7 @@ interface SheetContentProps
   extends React.ComponentPropsWithoutRef<typeof SheetPrimitive.Content>,
     VariantProps<typeof sheetVariants> {
   showClose?: boolean;
+  side?: "top" | "bottom" | "left" | "right";
 }
 
 const SheetContent = React.forwardRef<

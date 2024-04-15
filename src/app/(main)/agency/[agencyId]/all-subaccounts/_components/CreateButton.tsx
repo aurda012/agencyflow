@@ -53,7 +53,7 @@ const CreateButton: React.FC<CreateButtonProps> = ({ agencyId, user }) => {
   return (
     <Button className="flex items-center gap-2" onClick={onClickCreate}>
       <PlusCircle aria-hidden className="w-4 h-4" />
-      Create subaccount
+      Create Sub Account
     </Button>
   );
 };

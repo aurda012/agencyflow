@@ -2,6 +2,7 @@
 
 import { db } from "@/lib/db";
 import { Role, type SubAccount } from "@prisma/client";
+import { revalidatePath } from "next/cache";
 import { v4 as uuidv4 } from "uuid";
 
 export const getSubAccountDetails = async (subAccountId: string) => {
@@ -24,7 +25,10 @@ export const getSubAccountsByAgency = async (agencyId: string) => {
   return response;
 };
 
-export const upsertSubAccount = async (subAccount: SubAccount) => {
+export const upsertSubAccount = async (
+  subAccount: SubAccount,
+  path: string
+) => {
   if (!subAccount.companyEmail) return null;
 
   const agencyOwner = await db.user.findFirst({
@@ -112,6 +116,7 @@ export const upsertSubAccount = async (subAccount: SubAccount) => {
     },
   });
 
+  revalidatePath(path);
   return response;
 };
 

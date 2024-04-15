@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
@@ -55,6 +55,7 @@ const SubAccountDetails: React.FC<SubAccountDetailsProps> = ({
   userId,
   userName,
 }) => {
+  const path = usePathname();
   const router = useRouter();
   const { setClose } = useModal();
 
@@ -65,15 +66,18 @@ const SubAccountDetails: React.FC<SubAccountDetailsProps> = ({
 
   async function onSubmit(values: SubAccountDetailsSchema) {
     try {
-      const response = await upsertSubAccount({
-        id: details?.id ? details.id : uuidv4(),
-        createdAt: new Date(),
-        updatedAt: new Date(),
-        agencyId: agencyDetails.id,
-        connectAccountId: "",
-        goal: 5000,
-        ...values,
-      });
+      const response = await upsertSubAccount(
+        {
+          id: details?.id ? details.id : uuidv4(),
+          createdAt: new Date(),
+          updatedAt: new Date(),
+          agencyId: agencyDetails.id,
+          connectAccountId: "",
+          goal: 5000,
+          ...values,
+        },
+        path
+      );
 
       if (!response) throw new Error("No response from server");
 

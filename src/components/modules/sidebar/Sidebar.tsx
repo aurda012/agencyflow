@@ -58,7 +58,7 @@ const Sidebar: React.FC<SidebarProps> = async ({ id, type }) => {
   return (
     <>
       <MenuOptions
-        defaultOpen
+        defaultOpen={true}
         details={details}
         id={id}
         sideBarLogo={sideBarLogo}
