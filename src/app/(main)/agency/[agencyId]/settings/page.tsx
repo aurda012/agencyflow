@@ -38,13 +38,13 @@ const AgencySettingsPage: React.FC<AgencySettingsPageProps> = async ({
 
   return (
     <div className="flex flex-col gap-4 max-w-4xl w-full mx-auto">
-      <AgencyDetails data={agencyDetails} />
       <UserDetailsForm
         type="agency"
         id={agencyId}
         subAccounts={subAccounts}
         userData={userDetails}
       />
+      <AgencyDetails data={agencyDetails} />
     </div>
   );
 };
