@@ -13,7 +13,7 @@ import { buttonVariants } from "@/components/ui/button";
 
 const HomePage = () => {
   return (
-    <div className="h-full">
+    <>
       {/* <div className="absolute bottom-0 left-0 right-0 top-0 dark:bg-[linear-gradient(to_right,#161616_1px,transparent_1px),linear-gradient(to_bottom,#161616_1px,transparent_1px)] bg-[linear-gradient(to_right,#c4c2c2_1px,transparent_1px),linear-gradient(to_bottom,#c4c2c2_1px,transparent_1px)] bg-[size:1rem_1rem] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_0%,#000_70%,transparent_110%)] -z-10" /> */}
       <section className="w-full relative pb-8">
         <MaxWidthWrapper>
@@ -44,8 +44,8 @@ const HomePage = () => {
             </h2>
             <div className="text-muted-foreground text-center">
               <p>
-                Plura does everything possible to provide you with a convenient
-                tool for managing your agency.
+                AgencyFlow does everything possible to provide you with a
+                convenient tool for managing your agency.
               </p>
               <p>Here are just a few tools that may interest you.</p>
             </div>
@@ -62,9 +62,9 @@ const HomePage = () => {
           </h1>
           <p></p>
           <p className="text-neutral-500 max-w-lg mx-auto my-2 text-sm text-center relative z-10">
-            Discover the power of seamless agency management with Plura Agency
+            Discover the power of seamless agency management with AgencyFlow
             CRM. Experience the difference today and revolutionize the way you
-            manage your agency with Plura.
+            manage your agency with AgencyFlow.
           </p>
           <div className="flex justify-center mt-8">
             <Link
@@ -80,7 +80,7 @@ const HomePage = () => {
         </div>
         <BackgroundBeams />
       </div>
-    </div>
+    </>
   );
 };
 

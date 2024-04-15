@@ -10,7 +10,7 @@ import "./globals.css";
 import { Toaster } from "sonner";
 
 export const metadata: Metadata = {
-  title: "Plura",
+  title: "AgencyFlow",
   description: "All in one Agency Solution",
 };
 

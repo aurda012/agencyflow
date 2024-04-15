@@ -12,7 +12,7 @@ export interface PricingItem {
 export const PRICING: PricingItem[] = [
   {
     title: "Starter",
-    description: "Perfect for trying out Plura",
+    description: "Perfect for trying out AgencyFlow",
     price: "Free",
     duration: "",
     highlight: "Key features",
@@ -25,7 +25,11 @@ export const PRICING: PricingItem[] = [
     price: "$199",
     duration: "month",
     highlight: "Key features",
-    features: ["Everything in Starter and Basic", "Rebilling", "24/7 Support team"],
+    features: [
+      "Everything in Starter and Basic",
+      "Rebilling",
+      "24/7 Support team",
+    ],
     priceId: "price_1OpACCFdfEv15JJw0k6lm8HC",
   },
   {
@@ -34,7 +38,11 @@ export const PRICING: PricingItem[] = [
     price: "$49",
     duration: "month",
     highlight: "Everything in Starter",
-    features: ["Everything in Starter", "Unlimited Sub accounts", "Unlimited Team members"],
+    features: [
+      "Everything in Starter",
+      "Unlimited Sub accounts",
+      "Unlimited Team members",
+    ],
     priceId: "price_1OpACCFdfEv15JJwACWCyqW2",
   },
 ];

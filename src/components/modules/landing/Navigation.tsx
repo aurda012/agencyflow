@@ -18,7 +18,7 @@ const Navigation: React.FC<NavigationProps> = async ({}) => {
   return (
     <header className="absolute top-0 left-0 right-0 z-10 p-4 flex items-center justify-between">
       <aside className="flex items-center gap-2">
-        <Image src={logoImage} width={40} height={40} alt="Plura Logo" />
+        <Image src={logoImage} width={40} height={40} alt="AgencyFlow Logo" />
         <span className="text-xl font-bold z-10">AgencyFlow</span>
       </aside>
       <nav className="hidden md:block absolute left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2">

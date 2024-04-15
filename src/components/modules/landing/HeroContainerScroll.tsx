@@ -35,15 +35,10 @@ export const HeroContainerScroll = () => {
     <div className="flex items-center justify-center relative pt-32 ">
       <div className="w-full relative z-[9999]">
         <motion.div className="div max-w-5xl mx-auto text-center">
-          <a
-            href="#"
-            className="bg-slate-800 z-[99999] no-underline group cursor-pointer relative shadow-2xl shadow-zinc-900 rounded-full p-px text-xs font-semibold leading-6  inline-block"
-          >
-            <span className="absolute inset-0 overflow-hidden rounded-full">
+          {/* <span className="absolute inset-0 overflow-hidden rounded-full">
               <span className="absolute inset-0 rounded-full bg-[image:radial-gradient(75%_100%_at_50%_0%,rgba(56,189,248,0.6)_0%,rgba(56,189,248,0)_75%)] opacity-0 transition-opacity duration-500 group-hover:opacity-100"></span>
-            </span>
-            <span className="absolute -bottom-0 left-[1.125rem] h-px w-[calc(100%-2.25rem)] bg-gradient-to-r from-primary/0 via-primary/90 to-primary/0 transition-opacity duration-500 group-hover:opacity-40"></span>
-          </a>
+            </span> */}
+          {/* <span className="absolute -bottom-0 left-[1.125rem] h-px w-[calc(100%-2.25rem)] bg-gradient-to-r from-primary/0 via-primary/90 to-primary/0 transition-opacity duration-500 group-hover:opacity-40"></span> */}
           <p className="text-center font-medium mt-4 z-[99999]">
             <TypewriterEffect />
           </p>

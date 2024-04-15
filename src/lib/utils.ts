@@ -45,8 +45,8 @@ export const getStripeOAuthLink = (
 };
 
 export function constructMetadata({
-  title = "Plura - run your agency",
-  description = "Plura - run your agency in just aone place",
+  title = "AgencyFlow - run your agency",
+  description = "AgencyFlow - run your agency in just aone place",
   image = "/assets/preview.png",
   icons = "/assets/plura-logo.svg",
   noIndex = false,

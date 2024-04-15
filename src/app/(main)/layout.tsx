@@ -1,7 +1,7 @@
 import React from "react";
 import AuthProvider from "@/components/providers/AuthProvider";
 
-const MainLayout: React.FC<React.PropsWithChildren> = ({ children }) => {
+const MainLayout = ({ children }: { children: React.ReactNode }) => {
   return <AuthProvider>{children}</AuthProvider>;
 };
 

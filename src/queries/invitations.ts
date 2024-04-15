@@ -24,7 +24,7 @@ export const sendInvitation = async (
   if (user?.role === role) {
     throw new Error("This user already have this role");
   }
-  
+
   const resposne = await db.invitation.create({
     data: { email, agencyId, role },
   });
@@ -47,7 +47,7 @@ export const sendInvitation = async (
   return resposne;
 };
 
-export const verifyInvintation = async () => {
+export const verifyInvitation = async () => {
   const user = await currentUser();
 
   if (!user) return redirect("/sign-in");

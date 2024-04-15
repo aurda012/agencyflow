@@ -109,7 +109,7 @@ export const saveActivityLogsNotification = async ({
   }
 };
 
-export const getNotification = async (agencyId: string) => {
+export const getNotifications = async (agencyId: string) => {
   try {
     const response = await db.notification.findMany({
       where: {

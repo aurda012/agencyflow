@@ -12,7 +12,7 @@ export const getFunnels = async (subAccountId: string) => {
       subAccountId,
     },
     include: {
-      funnelPages: true,
+      FunnelPages: true,
     },
   });
 
@@ -25,7 +25,7 @@ export const getFunnel = async (funnelId: string) => {
       id: funnelId,
     },
     include: {
-      funnelPages: {
+      FunnelPages: {
         orderBy: {
           order: "asc",
         },
