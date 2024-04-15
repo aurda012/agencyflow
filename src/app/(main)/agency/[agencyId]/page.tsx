@@ -11,7 +11,7 @@ import {
   ShoppingCart,
 } from "lucide-react";
 
-import { getAgencyDetails } from "@/queries/agency";
+import { getAgencyDetails, updateAgencyConnectedId } from "@/queries/agency";
 import { getSubAccountsByAgency } from "@/queries/subaccount";
 
 import { AreaChart } from "@/components/ui/area-chart";
@@ -61,56 +61,62 @@ const AgencyIdPage: React.FC<AgencyIdPageProps> = async ({ params }) => {
   const subAccounts = await getSubAccountsByAgency(agencyId);
 
   if (agencyDetails?.connectAccountId) {
-    const response = await stripe.accounts.retrieve({
-      stripeAccount: agencyDetails.connectAccountId,
-    });
-
-    currency = response.default_currency?.toUpperCase() || "USD";
-
-    const checkoutSessions = await stripe.checkout.sessions.list(
-      {
-        created: {
-          gte: startDate,
-          lte: endDate,
-        },
-        limit: 100,
-      },
-      {
+    try {
+      const response = await stripe.accounts.retrieve({
         stripeAccount: agencyDetails.connectAccountId,
+      });
+
+      currency = response.default_currency?.toUpperCase() || "USD";
+
+      const checkoutSessions = await stripe.checkout.sessions.list(
+        {
+          created: {
+            gte: startDate,
+            lte: endDate,
+          },
+          limit: 100,
+        },
+        {
+          stripeAccount: agencyDetails.connectAccountId,
+        }
+      );
+
+      sessions = checkoutSessions.data;
+
+      totalClosedSessions = checkoutSessions.data
+        .filter((session) => session.status === "complete")
+        .map((session) => ({
+          ...session,
+          created: new Date().toLocaleDateString(),
+          amount_total: session.amount_total ? session.amount_total / 100 : 0,
+        }));
+
+      totalPendingSessions = checkoutSessions.data
+        .filter((session) => session.status === "open")
+        .map((session) => ({
+          ...session,
+          created: new Date().toLocaleDateString(),
+          amount_total: session.amount_total ? session.amount_total / 100 : 0,
+        }));
+
+      net = +totalClosedSessions
+        .reduce((total, session) => total + (session.amount_total || 0), 0)
+        .toFixed(2);
+
+      potentialIncome = +totalPendingSessions
+        .reduce((total, session) => total + (session.amount_total || 0), 0)
+        .toFixed(2);
+
+      closingRate +
+        (
+          (totalClosedSessions.length / checkoutSessions.data.length) *
+          100
+        ).toFixed(2);
+    } catch (error: any) {
+      if (error.code === "account_invalid") {
+        await updateAgencyConnectedId(agencyId, "");
       }
-    );
-
-    sessions = checkoutSessions.data;
-
-    totalClosedSessions = checkoutSessions.data
-      .filter((session) => session.status === "complete")
-      .map((session) => ({
-        ...session,
-        created: new Date().toLocaleDateString(),
-        amount_total: session.amount_total ? session.amount_total / 100 : 0,
-      }));
-
-    totalPendingSessions = checkoutSessions.data
-      .filter((session) => session.status === "open")
-      .map((session) => ({
-        ...session,
-        created: new Date().toLocaleDateString(),
-        amount_total: session.amount_total ? session.amount_total / 100 : 0,
-      }));
-
-    net = +totalClosedSessions
-      .reduce((total, session) => total + (session.amount_total || 0), 0)
-      .toFixed(2);
-
-    potentialIncome = +totalPendingSessions
-      .reduce((total, session) => total + (session.amount_total || 0), 0)
-      .toFixed(2);
-
-    closingRate +
-      (
-        (totalClosedSessions.length / checkoutSessions.data.length) *
-        100
-      ).toFixed(2);
+    }
   }
 
   return (

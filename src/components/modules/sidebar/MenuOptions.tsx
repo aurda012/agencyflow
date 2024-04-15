@@ -16,6 +16,7 @@ import {
 } from "@prisma/client";
 import { ChevronsUpDown, Compass, Menu, PlusCircle } from "lucide-react";
 
+import { buttonVariants } from "@/components/ui/button";
 import {
   Sheet,
   SheetClose,
@@ -274,13 +275,13 @@ const MenuOptions: React.FC<MenuOptionsProps> = ({
           </Popover>
           <p className="text-muted-foreground text-xs mb-2">Menu Links</p>
           <Separator className="mb-4" />
-          <nav className="relative">
-            <Command className="bg-transparent">
+          <nav className="relative h-full">
+            <Command className="bg-transparent h-full">
               <CommandInput
                 placeholder="Search..."
                 wrapperClassName="bg-muted border-none rounded-md"
               />
-              <CommandList className="mt-2">
+              <CommandList className="mt-2 max-h-[400px]">
                 <CommandEmpty>No results found.</CommandEmpty>
                 <CommandGroup>
                   {sideBarOptions.map((option) => {
@@ -295,21 +296,32 @@ const MenuOptions: React.FC<MenuOptionsProps> = ({
                     return (
                       <CommandItem
                         key={option.id}
-                        className={cn(
-                          "w-full transition-all aria-selected:bg-inherit",
-                          {
-                            "bg-primary text-white font-bold":
-                              pathname === option.link,
-                          }
-                        )}
+                        className={cn("p-0 aria-selected:bg-inherit", {
+                          "bg-primary text-white font-bold":
+                            pathname === option.link,
+                        })}
                         aria-selected={pathname === option.link && false}
                       >
                         <Link
+                          key={option.id}
                           href={option.link}
-                          className="flex items-center gap-2 rounded-md w-full"
+                          className={cn(
+                            buttonVariants({
+                              variant:
+                                pathname === option.link ? "default" : "ghost",
+                              size: "default",
+                            }),
+                            {
+                              "bg-primary text-white font-bold":
+                                pathname === option.link,
+                            },
+                            "w-full gap-2 justify-start"
+                            // link.variant === "default" &&
+                            //   "flex items-center gap-2 rounded-md w-full"
+                          )}
                         >
                           {value}
-                          <span>{option.name}</span>
+                          <span> {option.name}</span>
                         </Link>
                       </CommandItem>
                     );
