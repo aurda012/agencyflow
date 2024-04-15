@@ -304,7 +304,11 @@ const MenuOptions: React.FC<MenuOptionsProps> = ({
                       >
                         <Link
                           key={option.id}
-                          href={option.link}
+                          href={
+                            option.name === "Automations"
+                              ? pathname
+                              : option.link
+                          }
                           className={cn(
                             buttonVariants({
                               variant:
