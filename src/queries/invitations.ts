@@ -77,7 +77,7 @@ export const verifyInvitation = async () => {
       email: invintationExists.email,
       agencyId: invintationExists.agencyId,
       avatarUrl: user.imageUrl,
-      name: `${user.firstName} ${user.lastName}`,
+      name: `${user.firstName} ${user.lastName ? user.lastName : ""}`,
       createdAt: new Date(),
       updatedAt: new Date(),
     });
