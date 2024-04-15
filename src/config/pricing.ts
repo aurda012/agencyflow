@@ -30,7 +30,7 @@ export const PRICING: PricingItem[] = [
       "Rebilling",
       "24/7 Support team",
     ],
-    priceId: "price_1OpACCFdfEv15JJw0k6lm8HC",
+    priceId: "price_1P5scFP09QncQd2IrkDhBKTV",
   },
   {
     title: "Basic",
@@ -43,6 +43,6 @@ export const PRICING: PricingItem[] = [
       "Unlimited Sub accounts",
       "Unlimited Team members",
     ],
-    priceId: "price_1OpACCFdfEv15JJwACWCyqW2",
+    priceId: "price_1P5scFP09QncQd2I1CwdnYmt",
   },
 ];

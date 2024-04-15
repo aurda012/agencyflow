@@ -17,23 +17,23 @@ export async function POST(req: NextRequest) {
       customerId,
     },
     include: {
-      subscriptions: true,
+      subscription: true,
     },
   });
 
   try {
     if (
-      subscriptionExist?.subscriptions?.subscritiptionId &&
-      subscriptionExist.subscriptions.active
+      subscriptionExist?.subscription?.subscritiptionId &&
+      subscriptionExist.subscription.active
     ) {
       // Update subscription
       // get current subscription
       const currentSubscriptionDetails = await stripe.subscriptions.retrieve(
-        subscriptionExist.subscriptions.subscritiptionId,
+        subscriptionExist.subscription.subscritiptionId
       );
 
       const subsription = await stripe.subscriptions.update(
-        subscriptionExist.subscriptions.subscritiptionId,
+        subscriptionExist.subscription.subscritiptionId,
         {
           items: [
             {
@@ -45,7 +45,7 @@ export async function POST(req: NextRequest) {
             },
           ],
           expand: ["latest_invoice.payment_intent"],
-        },
+        }
       );
 
       return NextResponse.json({

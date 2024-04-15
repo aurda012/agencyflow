@@ -102,8 +102,7 @@ export const upsertAgency = async (agency: Agency, price?: Plan) => {
     });
 
     return agencyDetails;
-  } catch (error) {
-  }
+  } catch (error) {}
 };
 
 export const getAgencySubscription = async (agencyId: string) => {
@@ -113,7 +112,7 @@ export const getAgencySubscription = async (agencyId: string) => {
     },
     select: {
       customerId: true,
-      subscriptions: true,
+      subscription: true,
     },
   });
 

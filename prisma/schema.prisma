@@ -34,9 +34,9 @@ enum InvitationStatus {
 
 enum Plan {
   // Product 1: Base Plan
-  price_1OpACCFdfEv15JJwACWCyqW2
+  price_1P5scFP09QncQd2I1CwdnYmt
   // Product 2: Unlimited Plan
-  price_1OpACCFdfEv15JJw0k6lm8HC
+  price_1P5scFP09QncQd2IrkDhBKTV
 }
 
 enum Icon {
@@ -115,7 +115,7 @@ model Agency {
   sidebarOptions AgencySidebarOption[]
   invitations    Invitation[]
   notifications  Notification[]
-  subscriptions  Subscription?
+  subscription  Subscription?
   addOns         AddOns[]
 }
 
