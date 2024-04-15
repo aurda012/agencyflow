@@ -11,7 +11,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-import { Button } from "@/components/ui/button";
+import { Button, buttonVariants } from "@/components/ui/button";
 import {
   Command,
   CommandEmpty,
@@ -71,33 +71,29 @@ const PipelineInfoBar: React.FC<PipelineInfoBarProps> = ({
           </PopoverTrigger>
           <PopoverContent className="sm:w-48 w-[100vw - 16px] p-0">
             <Command className="w-full">
-              <CommandEmpty>No pipelines found.</CommandEmpty>
+              {/* <CommandEmpty>No pipelines found.</CommandEmpty> */}
               <CommandGroup className="w-full">
-                {pipelines.map((pipeline) => (
-                  <Link
-                    key={pipeline.id}
-                    href={`/subaccount/${subAccountId}/pipelines/${pipeline.id}`}
-                    className="cursor-pointer"
-                  >
-                    <CommandItem
+                {pipelines.map((pipeline) => {
+                  return (
+                    <Link
                       key={pipeline.id}
-                      value={pipeline.id}
-                      onSelect={(currentValue) => {
-                        setValue(currentValue);
-                        setIsOpen(false);
-                      }}
-                      className="cursor-pointer aria-selected:bg-primary"
+                      href={`/subaccount/${subAccountId}/pipelines/${pipeline.id}`}
+                      className={cn(
+                        buttonVariants({
+                          variant: value === pipeline.id ? "default" : "ghost",
+                          size: "sm",
+                        }),
+                        {
+                          "bg-primary text-white font-bold":
+                            value === pipeline.id,
+                        },
+                        "w-full gap-2 justify-start"
+                      )}
                     >
-                      <Check
-                        className={cn(
-                          "mr-2 h-4 w-4",
-                          value === pipeline.id ? "opacity-100" : "opacity-0"
-                        )}
-                      />
-                      {pipeline.name}
-                    </CommandItem>
-                  </Link>
-                ))}
+                      <span>{pipeline.name}</span>
+                    </Link>
+                  );
+                })}
                 <Button
                   variant="secondary"
                   className="flex gap-2 w-full mt-4"

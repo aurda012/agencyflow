@@ -1,12 +1,12 @@
 import React from "react";
 import Loading from "@/components/ui/loading";
 
-const SubAccountLoading: React.FC = () => {
+const AgencyLoading: React.FC = () => {
   return (
-    <div className="h-screen w-screen flex justify-center items-center">
+    <div className="h-[85vh] flex justify-center items-center">
       <Loading />
     </div>
   );
 };
 
-export default SubAccountLoading;
+export default AgencyLoading;
