@@ -55,5 +55,5 @@ const SubAccountSettingsPage: React.FC<SubAccountSettingsPageProps> = async ({
 export default SubAccountSettingsPage;
 
 export const metadata = constructMetadata({
-  title: "Settings - Plura",
+  title: "Settings | AgencyFlow",
 });

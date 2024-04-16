@@ -32,5 +32,5 @@ const PipelinesPage: React.FC<PipelinesPageProps> = async ({ params }) => {
 export default PipelinesPage;
 
 export const metadata = constructMetadata({
-  title: "Pipelines - Plura",
+  title: "Pipelines | AgencyFlow",
 });

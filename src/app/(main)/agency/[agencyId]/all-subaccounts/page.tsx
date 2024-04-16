@@ -123,5 +123,5 @@ const AllSubAccountsPage: React.FC<AllSubAccountsPageProps> = async ({
 export default AllSubAccountsPage;
 
 export const metadata = constructMetadata({
-  title: "Subaccounts - Plura",
+  title: "Subaccounts | AgencyFlow",
 });

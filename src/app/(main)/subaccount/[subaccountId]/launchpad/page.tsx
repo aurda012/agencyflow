@@ -173,5 +173,5 @@ const LaunchpadPage: React.FC<LaunchpadPageProps> = async ({
 export default LaunchpadPage;
 
 export const metadata = constructMetadata({
-  title: "Launchpad - Plura",
+  title: "Launchpad | AgencyFlow",
 });

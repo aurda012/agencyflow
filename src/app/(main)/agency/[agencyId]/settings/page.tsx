@@ -52,5 +52,5 @@ const AgencySettingsPage: React.FC<AgencySettingsPageProps> = async ({
 export default AgencySettingsPage;
 
 export const metadata = constructMetadata({
-  title: "Settings - Plura",
+  title: "Settings | AgencyFlow",
 });

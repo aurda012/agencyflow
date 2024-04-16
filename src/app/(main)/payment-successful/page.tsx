@@ -165,5 +165,5 @@ const PaymentSuccessfullPage: React.FC<PaymentSuccessfullPageProps> = async ({
 export default PaymentSuccessfullPage;
 
 export const metadata = constructMetadata({
-  title: "Payment successfull - Plura",
+  title: "Payment successfull | AgencyFlow",
 });

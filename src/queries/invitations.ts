@@ -99,7 +99,7 @@ export const verifyInvitation = async () => {
     if (userDetails) {
       await saveActivityLogsNotification({
         agencyId: invitationExists.agencyId,
-        description: `${userDetails.name} Joined`,
+        description: `Joined`,
         subAccountId: invitationExists.subAccountId
           ? invitationExists.subAccountId
           : undefined,

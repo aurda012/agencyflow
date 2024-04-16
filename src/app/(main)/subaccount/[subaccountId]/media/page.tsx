@@ -30,5 +30,5 @@ const MediaPage: React.FC<MediaPageProps> = async ({ params }) => {
 export default MediaPage;
 
 export const metadata = constructMetadata({
-  title: "Media - Plura",
+  title: "Media | AgencyFlow",
 });

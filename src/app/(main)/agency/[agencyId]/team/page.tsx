@@ -55,5 +55,5 @@ const TeamPage: React.FC<TeamPageProps> = async ({ params }) => {
 export default TeamPage;
 
 export const metadata = constructMetadata({
-  title: "Team - Plura",
+  title: "Team | AgencyFlow",
 });

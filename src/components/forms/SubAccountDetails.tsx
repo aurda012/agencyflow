@@ -96,9 +96,9 @@ const SubAccountDetails: React.FC<SubAccountDetailsProps> = ({
 
       await saveActivityLogsNotification({
         agencyId: response.agencyId,
-        description: `${userName} | ${
-          details ? "Updated" : "Created"
-        } Sub Account | ${response.name}`,
+        description: `${details ? "Updated" : "Created"} Sub Account | ${
+          response.name
+        }`,
         subAccountId: response.id,
       });
 

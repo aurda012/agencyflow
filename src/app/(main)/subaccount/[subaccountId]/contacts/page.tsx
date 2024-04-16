@@ -40,7 +40,7 @@ const SubAccountContactPage: React.FC<SubAccountContactPageProps> = async ({
 
     const laneAmt = tickets.reduce(
       (sum, ticket) => sum + (Number(ticket.value) || 0),
-      0,
+      0
     );
 
     return formatPrice(laneAmt);
@@ -99,5 +99,5 @@ const SubAccountContactPage: React.FC<SubAccountContactPageProps> = async ({
 export default SubAccountContactPage;
 
 export const metadata = constructMetadata({
-  title: "Contacts - Plura",
+  title: "Contacts | AgencyFlow",
 });

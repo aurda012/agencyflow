@@ -164,5 +164,5 @@ const LaunchPagPageage: React.FC<LaunchPagPageageProps> = async ({
 export default LaunchPagPageage;
 
 export const metadata = constructMetadata({
-  title: "Launchpad - Plura",
+  title: "Launchpad | AgencyFlow",
 });

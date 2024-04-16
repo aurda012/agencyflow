@@ -103,7 +103,7 @@ const AgencyBillingPage: React.FC<AgencyBillingPageProps> = async ({
           description={description}
           title={title}
           highlightTitle="Plan Options"
-          highlightDescription="Want to modify your plan? You can do this here. If you have further question please, contact support@plura.com"
+          highlightDescription="Want to modify your plan? You can do this here."
           duration="/ month"
           features={features}
         />
@@ -133,7 +133,6 @@ const AgencyBillingPage: React.FC<AgencyBillingPageProps> = async ({
               "Dedicated Support Team",
               "Faster Response Times",
               "Priority Issue Resolution",
-              "Dedicated Account Manager",
             ]}
           />
         ))}
@@ -196,5 +195,5 @@ const AgencyBillingPage: React.FC<AgencyBillingPageProps> = async ({
 export default AgencyBillingPage;
 
 export const metadata = constructMetadata({
-  title: "Billing - Plura",
+  title: "Billing | AgencyFlow",
 });

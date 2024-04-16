@@ -77,5 +77,5 @@ const PipelineIdPage: React.FC<PipelineIdPageProps> = async ({ params }) => {
 export default PipelineIdPage;
 
 export const metadata = constructMetadata({
-  title: "Pipeline - Plura",
+  title: "Pipeline | AgencyFlow",
 });
