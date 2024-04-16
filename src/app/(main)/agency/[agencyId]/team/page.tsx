@@ -45,7 +45,6 @@ const TeamPage: React.FC<TeamPageProps> = async ({ params }) => {
         />
       }
       filterValue="name"
-      // @ts-expect-error not sure why this error occurs but table is working fine
       columns={teamTableColumns}
       data={teamMembers}
     />
