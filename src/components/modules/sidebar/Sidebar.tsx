@@ -1,5 +1,4 @@
 import React from "react";
-import { type SubAccountSidebarOption } from "@prisma/client";
 
 import { getAuthUserDetails } from "@/queries/auth";
 
@@ -8,7 +7,10 @@ import {
   agencySidebarOptions,
   AgencySidebarOption,
 } from "@/config/agency-sidebar";
-import { subAccountSidebarOptions } from "@/config/subaccount-sidebar";
+import {
+  SubAccountSidebarOption,
+  subAccountSidebarOptions,
+} from "@/config/subaccount-sidebar";
 
 interface SidebarProps {
   id: string;

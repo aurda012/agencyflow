@@ -1,13 +1,7 @@
 "use client";
 
 import React from "react";
-import {
-  type AgencySidebarOption,
-  type User,
-  type SubAccount,
-  type SubAccountSidebarOption,
-  type Agency,
-} from "@prisma/client";
+import { type User, type SubAccount, type Agency } from "@prisma/client";
 import { PlusCircle } from "lucide-react";
 
 import { useModal } from "@/hooks/use-modal";
