@@ -3,6 +3,7 @@
 
 generator client {
   provider = "prisma-client-js"
+  output = "../node_modules/.prisma/client"
 }
 
 datasource db {
@@ -37,39 +38,6 @@ enum Plan {
   price_1P5scFP09QncQd2I1CwdnYmt
   // Product 2: Unlimited Plan
   price_1P5scFP09QncQd2IrkDhBKTV
-}
-
-enum Icon {
-  settings
-  chart
-  calendar
-  check
-  chip
-  compass
-  database
-  flag
-  home
-  info
-  link
-  lock
-  messages
-  notification
-  payment
-  power
-  receipt
-  shield
-  star
-  tune
-  videorecorder
-  wallet
-  warning
-  headphone
-  send
-  pipelines
-  person
-  category
-  contact
-  clipboardIcon
 }
 
 model User {

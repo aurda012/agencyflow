@@ -1,9 +1,7 @@
-import { $Enums } from "@prisma/client";
-
 export interface SubAccountSidebarOption {
   name: string;
   link: string;
-  icon: $Enums.Icon;
+  icon: string;
 }
 
 export const SUBACCOUNT_SIDEBAR_OPTIONS: SubAccountSidebarOption[] = [

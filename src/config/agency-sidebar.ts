@@ -1,9 +1,7 @@
-import { $Enums } from "@prisma/client";
-
 export interface AgencySidebarOption {
   name: string;
   link: string;
-  icon: $Enums.Icon;
+  icon: string;
 }
 
 export const AGENCY_SIDEBAR_OPTIONS: AgencySidebarOption[] = [
