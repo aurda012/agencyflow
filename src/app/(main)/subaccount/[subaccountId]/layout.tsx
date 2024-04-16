@@ -24,10 +24,10 @@ const SubAccountIdLayout: React.FC<SubAccountIdLayoutProps> = async ({
   params,
 }) => {
   const { subaccountId } = params;
-  const agencyId = await verifyInvitation();
+  const verify = await verifyInvitation();
 
   if (!subaccountId) redirect(`/subaccount/unauthorized`);
-  if (!agencyId) redirect(`/subaccount/unauthorized`);
+  if (!verify?.subAccountId) redirect(`/subaccount/unauthorized`);
 
   const user = await currentUser();
 
@@ -39,25 +39,23 @@ const SubAccountIdLayout: React.FC<SubAccountIdLayoutProps> = async ({
     redirect(`/subaccount/unauthorized`);
   }
 
-  const authUser = await getAuthUserDetails();
-  const hasPermission = authUser?.permissions.find(
-    (permission) =>
-      permission.access && permission.subAccountId === subaccountId
-  );
+  const hasPermission = verify?.subAccountId === subaccountId;
   if (!hasPermission) redirect(`/subaccount/unauthorized`);
 
-  const allNotifications = await getNotifications(agencyId);
+  if (verify) {
+    const allNotifications = await getNotifications(verify.agencyId as string);
 
-  if (
-    user.privateMetadata.role === Role.AGENCY_ADMIN ||
-    user.privateMetadata.role === Role.AGENCY_OWNER
-  ) {
-    notifications = allNotifications;
-  } else {
-    const filteredNotifications = allNotifications?.filter(
-      (notification) => notification.subAccountId === subaccountId
-    );
-    if (filteredNotifications) notifications = filteredNotifications;
+    if (
+      user.privateMetadata.role === Role.AGENCY_ADMIN ||
+      user.privateMetadata.role === Role.AGENCY_OWNER
+    ) {
+      notifications = allNotifications;
+    } else {
+      const filteredNotifications = allNotifications?.filter(
+        (notification) => notification.subAccountId === subaccountId
+      );
+      if (filteredNotifications) notifications = filteredNotifications;
+    }
   }
 
   return (

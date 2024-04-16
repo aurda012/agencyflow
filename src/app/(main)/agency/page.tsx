@@ -2,9 +2,8 @@ import React from "react";
 
 import { currentUser } from "@clerk/nextjs";
 import { redirect } from "next/navigation";
-import { type Plan, Role } from "@prisma/client";
+import { type Plan } from "@prisma/client";
 
-import { getAuthUserDetails } from "@/queries/auth";
 import { verifyInvitation } from "@/queries/invitations";
 
 import AgencyDetails from "@/components/forms/AgencyDetails";
@@ -22,37 +21,31 @@ interface AgencyPageProps {
 const AgencyPage = async ({ searchParams }: AgencyPageProps) => {
   const authUser = await currentUser();
 
-  const agencyId = await verifyInvitation();
-  const user = await getAuthUserDetails();
+  const verify = await verifyInvitation();
 
-  const isSubAccountUser =
-    user?.role === Role.SUBACCOUNT_GUEST || user?.role === Role.SUBACCOUNT_USER;
-  const isAgencyUser =
-    user?.role === Role.AGENCY_OWNER || user?.role === Role.AGENCY_ADMIN;
-
-  if (agencyId) {
-    if (isSubAccountUser) {
-      redirect("/subaccount");
-    } else if (isAgencyUser) {
+  if (verify) {
+    if (verify.subAccountId) {
+      redirect(`/subaccount/${verify.subAccountId}`);
+    } else {
       if (searchParams.plan) {
-        redirect(`/agency/${agencyId}/billing?plan=${searchParams.plan}`);
+        redirect(
+          `/agency/${verify.agencyId}/billing?plan=${searchParams.plan}`
+        );
       }
 
       if (searchParams.state) {
         const statePath = searchParams.state.split("___")[0];
         const stateAgencyId = searchParams.state.split("___")[1];
 
-        if (!stateAgencyId) return <div>Not authorized.</div>;
+        if (!stateAgencyId) return redirect(`/agency/unauthorized`);
 
         redirect(
           `/agency/${stateAgencyId}/${statePath}?code=${searchParams.code}`
         );
       }
 
-      redirect(`/agency/${agencyId}`);
+      redirect(`/agency/${verify.agencyId}`);
     }
-
-    return <Unauthorized />;
   }
 
   return (

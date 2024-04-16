@@ -434,6 +434,8 @@ model Invitation {
 
   email    String @unique
   agencyId String
+  name String
+  subAccountId String?
 
   agency Agency           @relation(fields: [agencyId], references: [id], onDelete: Cascade)
   status InvitationStatus @default(PENDING)

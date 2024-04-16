@@ -124,11 +124,13 @@ const AgencyDetails = ({ data }: AgencyDetailsProps) => {
         customerId = customerData.customerId;
       }
 
-      await initUser({ role: Role.AGENCY_OWNER });
+      let agencyId = data?.id ? data.id : uuidv4();
+
+      await initUser({ role: Role.AGENCY_OWNER, agencyId });
       if (!data?.customerId && !customerId) return;
 
       const response = await upsertAgency({
-        id: data?.id ? data.id : uuidv4(),
+        id: agencyId,
         customerId: data?.customerId || customerId || "",
         address: values.address,
         agencyLogo: values.agencyLogo,

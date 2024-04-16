@@ -1,5 +1,5 @@
 import React from "react";
-import { verifyInvintation } from "@/queries/invintations";
+import { verifyInvitation } from "@/queries/invitations";
 import { redirect } from "next/navigation";
 import { getAuthUserDetails } from "@/queries/auth";
 import Unauthorized from "@/components/common/Unauthorized";
@@ -17,12 +17,7 @@ const SubAccountPage: React.FC<SubAccountPageProps> = async ({
 }) => {
   const { code, state } = searchParams;
 
-  const agencyId = await verifyInvintation();
-
-  if (!agencyId) redirect(`/subaccount/unauthorized`);
-
-  const user = await getAuthUserDetails();
-  if (!user) redirect(`/agency/sign-in`);
+  const verify = await verifyInvitation();
 
   if (state) {
     const statePath = state.split("___")[0];
@@ -33,12 +28,8 @@ const SubAccountPage: React.FC<SubAccountPageProps> = async ({
     redirect(`/subaccount/${stateSubAccountId}/${statePath}?code=${code}`);
   }
 
-  const firstSubAccountWithAccess = user.permissions.find(
-    (permission) => permission.access === true
-  );
-
-  if (firstSubAccountWithAccess) {
-    redirect(`/subaccount/${firstSubAccountWithAccess.subAccountId}`);
+  if (verify?.subAccountId) {
+    redirect(`/subaccount/${verify.subAccountId}`);
   }
 
   return <Unauthorized />;
@@ -47,5 +38,5 @@ const SubAccountPage: React.FC<SubAccountPageProps> = async ({
 export default SubAccountPage;
 
 export const metadata = constructMetadata({
-  title: "Subaccount - Plura",
+  title: "Sub Account | AgencyFlow",
 });

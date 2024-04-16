@@ -38,7 +38,12 @@ const TeamPage: React.FC<TeamPageProps> = async ({ params }) => {
           Add
         </>
       }
-      modalChildren={<SendInvitation agencyId={agencyId} />}
+      modalChildren={
+        <SendInvitation
+          agencyId={agencyId}
+          subAccounts={agencyDetails.subAccounts}
+        />
+      }
       filterValue="name"
       // @ts-expect-error not sure why this error occurs but table is working fine
       columns={teamTableColumns}

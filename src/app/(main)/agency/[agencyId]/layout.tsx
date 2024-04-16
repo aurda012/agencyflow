@@ -21,10 +21,10 @@ const AgencyIdLayout: React.FC<AgencyIdLayoutProps> = async ({
   children,
 }) => {
   const user = await currentUser();
-  const agencyId = await verifyInvitation();
+  const verify = await verifyInvitation();
 
   if (!user) redirect("/");
-  if (!agencyId || !params.agencyId) redirect("/agency");
+  if (!verify?.agencyId || !params.agencyId) redirect("/agency");
 
   if (
     user.privateMetadata.role !== Role.AGENCY_OWNER &&
@@ -33,7 +33,7 @@ const AgencyIdLayout: React.FC<AgencyIdLayoutProps> = async ({
     redirect("/agency/unauthorized");
   }
 
-  const notifications = await getNotifications(agencyId);
+  const notifications = await getNotifications(verify?.agencyId);
 
   return (
     <div className="h-screen overflow-hidden">

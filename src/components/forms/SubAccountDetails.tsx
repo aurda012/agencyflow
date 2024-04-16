@@ -35,6 +35,7 @@ import {
   type SubAccountDetailsSchema,
   SubAccountDetailsValidator,
 } from "@/lib/validators/subaccount-details";
+import { sendInvitation } from "@/queries/invitations";
 
 // CHALLENGE Give access for Subaccount Guest they should see a different view maybe a form that allows them to create tickets
 
@@ -66,9 +67,10 @@ const SubAccountDetails: React.FC<SubAccountDetailsProps> = ({
 
   async function onSubmit(values: SubAccountDetailsSchema) {
     try {
+      const subAccountId = details?.id ? details.id : uuidv4();
       const response = await upsertSubAccount(
         {
-          id: details?.id ? details.id : uuidv4(),
+          id: subAccountId,
           createdAt: new Date(),
           updatedAt: new Date(),
           agencyId: agencyDetails.id,
@@ -76,14 +78,27 @@ const SubAccountDetails: React.FC<SubAccountDetailsProps> = ({
           goal: 5000,
           ...values,
         },
-        path
+        path,
+        details ? false : true
       );
 
       if (!response) throw new Error("No response from server");
 
+      if (!details) {
+        await sendInvitation(
+          values.name,
+          "SUBACCOUNT_USER",
+          values.companyEmail,
+          agencyDetails.id,
+          subAccountId
+        );
+      }
+
       await saveActivityLogsNotification({
         agencyId: response.agencyId,
-        description: `${userName} | Updated subaccount | ${response.name}`,
+        description: `${userName} | ${
+          details ? "Updated" : "Created"
+        } Sub Account | ${response.name}`,
         subAccountId: response.id,
       });
 

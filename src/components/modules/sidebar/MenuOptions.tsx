@@ -46,6 +46,7 @@ import { cn } from "@/lib/utils";
 import { useModal } from "@/hooks/use-modal";
 import { Separator } from "@/components/ui/separator";
 import { icons } from "@/components/ui/icons";
+import { link } from "fs";
 
 interface MenuOptionsProps {
   id: string;
@@ -81,6 +82,14 @@ const MenuOptions: React.FC<MenuOptionsProps> = ({
 
   const isOwnerOrAdmin =
     user.role === Role.AGENCY_ADMIN || user.role === Role.AGENCY_OWNER;
+
+  const includesPathname = (option: any) => {
+    if (option.name === "Dashboard") {
+      return pathname === option.link;
+    } else {
+      return pathname.includes(option.link);
+    }
+  };
 
   return (
     <Sheet modal={false} open={defaultOpen ? true : undefined}>
@@ -298,9 +307,9 @@ const MenuOptions: React.FC<MenuOptionsProps> = ({
                         key={option.id}
                         className={cn("p-0 aria-selected:bg-inherit", {
                           "bg-primary text-white font-bold":
-                            pathname === option.link,
+                            includesPathname(option),
                         })}
-                        aria-selected={pathname === option.link && false}
+                        aria-selected={includesPathname(option) && false}
                       >
                         <Link
                           key={option.id}
@@ -311,13 +320,14 @@ const MenuOptions: React.FC<MenuOptionsProps> = ({
                           }
                           className={cn(
                             buttonVariants({
-                              variant:
-                                pathname === option.link ? "default" : "ghost",
+                              variant: includesPathname(option)
+                                ? "default"
+                                : "ghost",
                               size: "default",
                             }),
                             {
                               "bg-primary text-white font-bold":
-                                pathname === option.link,
+                                includesPathname(option),
                             },
                             "w-full gap-2 justify-start"
                             // link.variant === "default" &&

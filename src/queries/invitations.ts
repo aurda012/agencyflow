@@ -3,17 +3,21 @@
 import { db } from "@/lib/db";
 import { clerkClient, currentUser } from "@clerk/nextjs";
 import { redirect } from "next/navigation";
+import { v4 as uuidv4 } from "uuid";
 
 import { createTeamUser } from "./auth";
 import { saveActivityLogsNotification } from "./notifications";
 
 import { Role } from "@prisma/client";
 import { logger } from "@/lib/utils";
+import { changeUserPermissions } from "./permissions";
 
 export const sendInvitation = async (
+  name: string,
   role: Role,
   email: string,
-  agencyId: string
+  agencyId: string,
+  subAccountId?: string
 ) => {
   const user = await db.user.findUnique({
     where: {
@@ -26,21 +30,22 @@ export const sendInvitation = async (
   }
 
   const resposne = await db.invitation.create({
-    data: { email, agencyId, role },
+    data: { name, email, agencyId, role, subAccountId },
   });
 
   try {
     await clerkClient.invitations.createInvitation({
       emailAddress: email,
-      redirectUrl: process.env.NEXT_PUBLIC_URL,
+      redirectUrl: `${process.env.NEXT_PUBLIC_URL}/sign-up`,
       ignoreExisting: true,
       publicMetadata: {
         throughInvitation: true,
         role,
+        subAccountId: subAccountId ? subAccountId : undefined,
       },
     });
-  } catch (error) {
-    logger(error);
+  } catch (error: any) {
+    console.error(error);
     throw error;
   }
 
@@ -52,7 +57,7 @@ export const verifyInvitation = async () => {
 
   if (!user) return redirect("/sign-in");
 
-  const invintationExists = await db.invitation.findUnique({
+  const invitationExists = await db.invitation.findUnique({
     where: {
       email: user.emailAddresses[0].emailAddress,
       status: "PENDING",
@@ -64,36 +69,56 @@ export const verifyInvitation = async () => {
     where: {
       email: user.emailAddresses[0].emailAddress,
     },
+    include: {
+      permissions: true,
+    },
   });
 
   if (isUserExist) {
-    return isUserExist.agencyId;
+    return {
+      agencyId: isUserExist.agencyId,
+      subAccountId:
+        isUserExist.role === Role.SUBACCOUNT_USER
+          ? isUserExist.permissions[0].subAccountId
+          : null,
+    };
   }
 
-  if (invintationExists) {
-    const userDetails = await createTeamUser(invintationExists.agencyId, {
+  if (invitationExists) {
+    const userDetails = await createTeamUser(invitationExists.agencyId, {
       id: user.id,
-      role: invintationExists.role,
-      email: invintationExists.email,
-      agencyId: invintationExists.agencyId,
+      role: invitationExists.role,
+      email: invitationExists.email,
+      agencyId: invitationExists.agencyId,
       avatarUrl: user.imageUrl,
-      name: `${user.firstName} ${user.lastName ? user.lastName : ""}`,
+      name: `${user.firstName} ${user.lastName}`,
       createdAt: new Date(),
       updatedAt: new Date(),
     });
 
-    await saveActivityLogsNotification({
-      agencyId: invintationExists?.agencyId,
-      description: "Joined",
-      subAccountId: undefined,
-    });
-
     if (userDetails) {
+      await saveActivityLogsNotification({
+        agencyId: invitationExists.agencyId,
+        description: `${userDetails.name} Joined`,
+        subAccountId: invitationExists.subAccountId
+          ? invitationExists.subAccountId
+          : undefined,
+      });
+
       await clerkClient.users.updateUserMetadata(user.id, {
         privateMetadata: {
           role: userDetails.role || Role.SUBACCOUNT_USER,
         },
       });
+
+      if (invitationExists.subAccountId) {
+        await changeUserPermissions(
+          uuidv4(),
+          userDetails.email,
+          invitationExists.subAccountId,
+          true
+        );
+      }
 
       await db.invitation.delete({
         where: {
@@ -101,17 +126,16 @@ export const verifyInvitation = async () => {
         },
       });
 
-      return userDetails.agencyId;
+      return {
+        agencyId: userDetails.agencyId,
+        subAccountId: invitationExists.subAccountId
+          ? invitationExists.subAccountId
+          : null,
+      };
     }
 
     return null;
   }
 
-  const agency = await db.user.findUnique({
-    where: {
-      email: user.emailAddresses[0].emailAddress,
-    },
-  });
-
-  return agency ? agency.agencyId : null;
+  return null;
 };

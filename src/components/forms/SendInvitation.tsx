@@ -5,7 +5,7 @@ import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "sonner";
-import { Role } from "@prisma/client";
+import { Role, SubAccount } from "@prisma/client";
 
 import { saveActivityLogsNotification } from "@/queries/notifications";
 import { sendInvitation } from "@/queries/invitations";
@@ -43,9 +43,13 @@ import { useModal } from "@/hooks/use-modal";
 
 interface SendInvitationProps {
   agencyId: string;
+  subAccounts: SubAccount[];
 }
 
-const SendInvitation: React.FC<SendInvitationProps> = ({ agencyId }) => {
+const SendInvitation: React.FC<SendInvitationProps> = ({
+  agencyId,
+  subAccounts,
+}) => {
   const { setClose } = useModal();
   const form = useForm<SendInvitationSchema>({
     resolver: zodResolver(SendInvitationValidator),
@@ -57,17 +61,26 @@ const SendInvitation: React.FC<SendInvitationProps> = ({ agencyId }) => {
   });
 
   const onSubmit = async (values: SendInvitationSchema) => {
+    if (values.role !== "AGENCY_ADMIN" && !values.subAccountId) {
+      toast.error("No Sub Account!", {
+        description: "Please select a sub account for this invitation.",
+      });
+      return;
+    }
+
     try {
       const response = await sendInvitation(
+        values.name,
         values.role,
         values.email,
-        agencyId
+        agencyId,
+        values.subAccountId
       );
 
       await saveActivityLogsNotification({
         agencyId,
         description: `Invited ${response.email}`,
-        subAccountId: undefined,
+        subAccountId: values.subAccountId ? values.subAccountId : undefined,
       });
 
       setClose();
@@ -100,6 +113,20 @@ const SendInvitation: React.FC<SendInvitationProps> = ({ agencyId }) => {
             onSubmit={form.handleSubmit(onSubmit)}
             className="flex flex-col gap-6"
           >
+            <FormField
+              disabled={isSubmitting}
+              control={form.control}
+              name="name"
+              render={({ field }) => (
+                <FormItem className="flex-1">
+                  <FormLabel>Full Name</FormLabel>
+                  <FormControl>
+                    <Input placeholder="Full Name" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
             <FormField
               disabled={isSubmitting}
               control={form.control}
@@ -144,6 +171,36 @@ const SendInvitation: React.FC<SendInvitationProps> = ({ agencyId }) => {
                 </FormItem>
               )}
             />
+            {form.getValues().role !== "AGENCY_ADMIN" && (
+              <FormField
+                disabled={isSubmitting}
+                control={form.control}
+                name="subAccountId"
+                render={({ field }) => (
+                  <FormItem className="flex-1">
+                    <FormLabel>Sub Account</FormLabel>
+                    <Select
+                      onValueChange={(value) => field.onChange(value)}
+                      defaultValue={field.value}
+                    >
+                      <FormControl>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select Sub Account..." />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        {subAccounts.map((subAccount) => (
+                          <SelectItem key={subAccount.id} value={subAccount.id}>
+                            {subAccount.name}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            )}
             <Button
               disabled={isSubmitting}
               isLoading={isSubmitting}

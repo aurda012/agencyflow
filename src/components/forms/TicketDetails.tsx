@@ -231,7 +231,7 @@ const TicketDetails: React.FC<TicketDetailsProps> = ({
               defaultTags={defaultData.ticket?.tags || []}
             />
             <FormItem>
-              <FormLabel>Assigned to Team Member</FormLabel>
+              <FormLabel>Assign to Team Member</FormLabel>
               <Select onValueChange={setAssignedTo} defaultValue={assignedTo}>
                 <SelectTrigger>
                   <SelectValue
