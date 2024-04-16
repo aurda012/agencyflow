@@ -1,5 +1,5 @@
 import React from "react";
-import { redirect } from "next/navigation";
+import { redirect, usePathname } from "next/navigation";
 import Link from "next/link";
 import Stripe from "stripe";
 import { format } from "date-fns";
@@ -33,6 +33,7 @@ import BlurPage from "@/components/common/BlurPage";
 
 import { stripe } from "@/lib/stripe";
 import { constructMetadata } from "@/lib/utils";
+import Unauthorized from "@/components/common/Unauthorized";
 
 interface SubAccountPageIdProps {
   params: {
@@ -45,7 +46,9 @@ const SubAccountPageId: React.FC<SubAccountPageIdProps> = async ({
 }) => {
   const { subaccountId } = params;
 
-  if (!subaccountId) redirect("/subaccount/unauthorized");
+  if (!subaccountId) {
+    redirect("/subaccount/unauthorized");
+  }
 
   let currency: string = "USD";
   let sessions: Stripe.Checkout.Session[] = [];
@@ -61,7 +64,9 @@ const SubAccountPageId: React.FC<SubAccountPageIdProps> = async ({
 
   const subAccountDetails = await getSubAccountDetails(subaccountId);
 
-  if (!subAccountDetails) redirect("/subaccount/unauthorized");
+  if (!subAccountDetails) {
+    redirect("/subaccount/unauthorized");
+  }
 
   if (subAccountDetails.connectAccountId) {
     const response = await stripe.accounts.retrieve({
@@ -281,7 +286,10 @@ const SubAccountPageId: React.FC<SubAccountPageIdProps> = async ({
                               </Badge>
                             </TableCell>
                             <TableCell>
-                              {format(new Date(session.created), "dd/MM/yyyy hh:mm")}
+                              {format(
+                                new Date(session.created),
+                                "dd/MM/yyyy hh:mm"
+                              )}
                             </TableCell>
 
                             <TableCell className="text-right">

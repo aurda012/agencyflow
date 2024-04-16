@@ -36,9 +36,9 @@ import UserDetails from "@/components/forms/UserDetails";
 import CustomModal from "@/components/common/CustomModal";
 
 import { cn } from "@/lib/utils";
-import { type UsersWithAgencySubAccountPermissionsSidebarOptions } from "@/lib/types";
+import { type UsersWithAgencySubAccountPermissions } from "@/lib/types";
 
-export const teamTableColumns: ColumnDef<UsersWithAgencySubAccountPermissionsSidebarOptions>[] =
+export const teamTableColumns: ColumnDef<UsersWithAgencySubAccountPermissions>[] =
   [
     {
       accessorKey: "id",
@@ -146,7 +146,7 @@ export const teamTableColumns: ColumnDef<UsersWithAgencySubAccountPermissionsSid
   ];
 
 interface CellActionsProps {
-  rowData: UsersWithAgencySubAccountPermissionsSidebarOptions;
+  rowData: UsersWithAgencySubAccountPermissions;
 }
 
 const CellActions: React.FC<CellActionsProps> = ({ rowData }) => {
@@ -226,8 +226,7 @@ const CellActions: React.FC<CellActionsProps> = ({ rowData }) => {
               setIsLoading(true);
               await deleteUser(rowData.id);
               toast.success("Deleted User", {
-                description:
-                  "The user has been deleted from this agency.",
+                description: "The user has been deleted from this agency.",
               });
               setIsLoading(false);
               router.refresh();

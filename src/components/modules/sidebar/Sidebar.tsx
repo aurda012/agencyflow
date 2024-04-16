@@ -1,12 +1,14 @@
 import React from "react";
-import {
-  type AgencySidebarOption,
-  type SubAccountSidebarOption,
-} from "@prisma/client";
+import { type SubAccountSidebarOption } from "@prisma/client";
 
 import { getAuthUserDetails } from "@/queries/auth";
 
 import MenuOptions from "./MenuOptions";
+import {
+  agencySidebarOptions,
+  AgencySidebarOption,
+} from "@/config/agency-sidebar";
+import { subAccountSidebarOptions } from "@/config/subaccount-sidebar";
 
 interface SidebarProps {
   id: string;
@@ -39,13 +41,9 @@ const Sidebar: React.FC<SidebarProps> = async ({ id, type }) => {
   let sidebarOptions: AgencySidebarOption[] | SubAccountSidebarOption[] = [];
 
   if (type === "agency") {
-    sidebarOptions = user.agency.sidebarOptions || [];
+    sidebarOptions = agencySidebarOptions(id);
   } else {
-    const subAccount = user.agency.subAccounts.find(
-      (subaccount) => subaccount.id === id
-    );
-
-    sidebarOptions = subAccount?.sidebarOptions || [];
+    sidebarOptions = subAccountSidebarOptions(id);
   }
 
   const subAccounts = user.agency.subAccounts.filter((subAccount) =>

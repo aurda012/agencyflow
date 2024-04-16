@@ -73,50 +73,6 @@ export const upsertSubAccount = async (
             name: "Lead Cycle",
           },
         },
-        sidebarOptions: {
-          create: [
-            {
-              name: "Launchpad",
-              icon: "clipboardIcon",
-              link: `/subaccount/${subAccount.id}/launchpad`,
-            },
-            {
-              name: "Settings",
-              icon: "settings",
-              link: `/subaccount/${subAccount.id}/settings`,
-            },
-            {
-              name: "Funnels",
-              icon: "pipelines",
-              link: `/subaccount/${subAccount.id}/funnels`,
-            },
-            {
-              name: "Media",
-              icon: "database",
-              link: `/subaccount/${subAccount.id}/media`,
-            },
-            {
-              name: "Automations",
-              icon: "chip",
-              link: `/subaccount/${subAccount.id}/automations`,
-            },
-            {
-              name: "Pipelines",
-              icon: "flag",
-              link: `/subaccount/${subAccount.id}/pipelines`,
-            },
-            {
-              name: "Contacts",
-              icon: "person",
-              link: `/subaccount/${subAccount.id}/contacts`,
-            },
-            {
-              name: "Dashboard",
-              icon: "category",
-              link: `/subaccount/${subAccount.id}`,
-            },
-          ],
-        },
       },
     });
 

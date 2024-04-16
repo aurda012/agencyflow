@@ -27,7 +27,7 @@ const SubAccountIdLayout: React.FC<SubAccountIdLayoutProps> = async ({
   const verify = await verifyInvitation();
 
   if (!subaccountId) redirect(`/subaccount/unauthorized`);
-  if (!verify?.subAccountId) redirect(`/subaccount/unauthorized`);
+  if (!verify?.agencyId) redirect(`/subaccount/unauthorized`);
 
   const user = await currentUser();
 
@@ -36,11 +36,20 @@ const SubAccountIdLayout: React.FC<SubAccountIdLayoutProps> = async ({
   let notifications: NotificationsWithUser = [];
 
   if (!user.privateMetadata.role) {
+    console.log("Unauthorized:", "Sub Account Layout");
     redirect(`/subaccount/unauthorized`);
   }
 
-  const hasPermission = verify?.subAccountId === subaccountId;
-  if (!hasPermission) redirect(`/subaccount/unauthorized`);
+  const authUser = await getAuthUserDetails();
+  console.log(authUser);
+  const hasPermission = authUser?.permissions.find(
+    (permission) =>
+      permission.access && permission.subAccountId === subaccountId
+  );
+  if (!hasPermission) {
+    console.log("Unauthorized:", "Sub Account Layout");
+    redirect(`/subaccount/unauthorized`);
+  }
 
   if (verify) {
     const allNotifications = await getNotifications(verify.agencyId as string);

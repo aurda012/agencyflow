@@ -20,10 +20,7 @@ interface CreateButtonProps {
   user: User & {
     agency:
       | (Agency & {
-          sidebarOptions: AgencySidebarOption[];
-          subAccounts: (SubAccount & {
-            sidebarOptions: SubAccountSidebarOption[];
-          })[];
+          subAccounts: SubAccount[];
         })
       | null;
   };

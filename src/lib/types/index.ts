@@ -25,11 +25,13 @@ export type UserWithPermissionsAndSubAccounts = Prisma.PromiseReturnType<
   typeof getUserWithPermissionsAndSubAccount
 >;
 
-export type AuthUserWithAgencySidebarOptionsAndSubAccounts =
-  Prisma.PromiseReturnType<typeof getAuthUserDetails>;
+export type AuthUserWithAgencyAndSubAccounts = Prisma.PromiseReturnType<
+  typeof getAuthUserDetails
+>;
 
-export type UsersWithAgencySubAccountPermissionsSidebarOptions =
-  Prisma.PromiseReturnType<typeof getAuthUserDetails>;
+export type UsersWithAgencySubAccountPermissions = Prisma.PromiseReturnType<
+  typeof getAuthUserDetails
+>;
 
 export type MediaFiles = Prisma.PromiseReturnType<typeof getMedia>;
 
@@ -81,6 +83,10 @@ export type StripeCustomer = {
 
 export type PriceList = Stripe.ApiList<Stripe.Price>;
 
-export type FunnelsForSubAccount = Prisma.PromiseReturnType<typeof getFunnels>[0];
+export type FunnelsForSubAccount = Prisma.PromiseReturnType<
+  typeof getFunnels
+>[0];
 
-export type PipelinesWithLanesAndTickets = Prisma.PromiseReturnType<typeof getPipelines>
+export type PipelinesWithLanesAndTickets = Prisma.PromiseReturnType<
+  typeof getPipelines
+>;

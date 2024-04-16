@@ -7,9 +7,7 @@ import { usePathname } from "next/navigation";
 
 import {
   type User,
-  type AgencySidebarOption,
   type SubAccount,
-  type SubAccountSidebarOption,
   type Agency,
   type Permissions,
   Role,
@@ -46,7 +44,8 @@ import { cn } from "@/lib/utils";
 import { useModal } from "@/hooks/use-modal";
 import { Separator } from "@/components/ui/separator";
 import { icons } from "@/components/ui/icons";
-import { link } from "fs";
+import { AgencySidebarOption } from "@/config/agency-sidebar";
+import { SubAccountSidebarOption } from "@/config/subaccount-sidebar";
 
 interface MenuOptionsProps {
   id: string;
@@ -85,7 +84,7 @@ const MenuOptions: React.FC<MenuOptionsProps> = ({
 
   const includesPathname = (option: any) => {
     if (option.name === "Dashboard") {
-      return pathname === option.link;
+      return `${pathname}/` === option.link;
     } else {
       return pathname.includes(option.link);
     }
@@ -304,7 +303,7 @@ const MenuOptions: React.FC<MenuOptionsProps> = ({
                     }
                     return (
                       <CommandItem
-                        key={option.id}
+                        key={option.name}
                         className={cn("p-0 aria-selected:bg-inherit", {
                           "bg-primary text-white font-bold":
                             includesPathname(option),
@@ -312,7 +311,6 @@ const MenuOptions: React.FC<MenuOptionsProps> = ({
                         aria-selected={includesPathname(option) && false}
                       >
                         <Link
-                          key={option.id}
                           href={
                             option.name === "Automations"
                               ? pathname

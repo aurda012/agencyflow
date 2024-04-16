@@ -46,7 +46,7 @@ import FileUpload from "../common/FileUpload";
 
 import { useModal } from "@/hooks/use-modal";
 import {
-  type AuthUserWithAgencySidebarOptionsAndSubAccounts,
+  type AuthUserWithAgencyAndSubAccounts,
   type UserWithPermissionsAndSubAccounts,
 } from "@/lib/types";
 import {
@@ -76,7 +76,7 @@ const UserDetailsForm: React.FC<UserDetailsProps> = ({
   const [subAccountPermissions, setSubAccountPermissions] =
     React.useState<UserWithPermissionsAndSubAccounts | null>(null);
   const [authUserData, setAuthUserData] =
-    React.useState<AuthUserWithAgencySidebarOptionsAndSubAccounts | null>(null);
+    React.useState<AuthUserWithAgencyAndSubAccounts | null>(null);
 
   const form = useForm<UserDataSchema>({
     resolver: zodResolver(UserDataValidator),

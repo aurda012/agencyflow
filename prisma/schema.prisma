@@ -112,7 +112,6 @@ model Agency {
 
   users          User[]
   subAccounts    SubAccount[]
-  sidebarOptions AgencySidebarOption[]
   invitations    Invitation[]
   notifications  Notification[]
   subscription  Subscription?
@@ -138,7 +137,6 @@ model SubAccount {
   agencyId         String
 
   agency         Agency                    @relation(fields: [agencyId], references: [id], onDelete: Cascade)
-  sidebarOptions SubAccountSidebarOption[]
   permissions    Permissions[]
   funnels        Funnel[]
   media          Media[]
@@ -397,36 +395,6 @@ model FunnelPage {
   funnel Funnel @relation(fields: [funnelId], references: [id], onDelete: Cascade)
 
   @@index([funnelId])
-}
-
-model AgencySidebarOption {
-  id        String   @id @default(uuid())
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  name     String @default("Menu")
-  link     String @default("#")
-  icon     Icon   @default(info)
-  agencyId String
-
-  agency Agency? @relation(fields: [agencyId], references: [id], onDelete: Cascade)
-
-  @@index([agencyId])
-}
-
-model SubAccountSidebarOption {
-  id        String   @id @default(uuid())
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  name         String  @default("Menu")
-  link         String  @default("#")
-  subAccountId String?
-
-  icon       Icon        @default(info)
-  subAccount SubAccount? @relation(fields: [subAccountId], references: [id], onDelete: Cascade)
-
-  @@index([subAccountId])
 }
 
 model Invitation {
