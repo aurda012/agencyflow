@@ -424,7 +424,7 @@ model Subscription {
   priceId              String
   customerId           String
   currentPeriodEndDate DateTime
-  subscritiptionId     String   @unique
+  subscriptionId     String   @unique
 
   agencyId String? @unique
   agency   Agency? @relation(fields: [agencyId], references: [id])

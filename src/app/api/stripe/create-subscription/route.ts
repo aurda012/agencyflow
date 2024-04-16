@@ -23,17 +23,17 @@ export async function POST(req: NextRequest) {
 
   try {
     if (
-      subscriptionExist?.subscription?.subscritiptionId &&
+      subscriptionExist?.subscription?.subscriptionId &&
       subscriptionExist.subscription.active
     ) {
       // Update subscription
       // get current subscription
       const currentSubscriptionDetails = await stripe.subscriptions.retrieve(
-        subscriptionExist.subscription.subscritiptionId
+        subscriptionExist.subscription.subscriptionId
       );
 
       const subsription = await stripe.subscriptions.update(
-        subscriptionExist.subscription.subscritiptionId,
+        subscriptionExist.subscription.subscriptionId,
         {
           items: [
             {

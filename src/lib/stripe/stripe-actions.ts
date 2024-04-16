@@ -32,7 +32,7 @@ export const subscriptionCreate = async (
       currentPeriodEndDate: new Date(subscription.current_period_end * 1000),
       // @ts-ignore
       priceId: subscription.plan.id,
-      subscritiptionId: subscription.id,
+      subscriptionId: subscription.id,
       // @ts-ignore
       plan: subscription.plan.id as Plan,
     };

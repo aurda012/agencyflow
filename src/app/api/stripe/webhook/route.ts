@@ -61,6 +61,7 @@ export async function POST(req: NextRequest) {
       ) {
         switch (stripeEvent.type) {
           case "customer.subscription.created":
+          case "customer.subscription.deleted":
           case "customer.subscription.updated": {
             if (subscription.status === "active") {
               await subscriptionCreate(

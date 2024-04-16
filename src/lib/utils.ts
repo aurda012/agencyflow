@@ -74,12 +74,12 @@ export function constructMetadata({
       title,
       description,
       images: [image],
-      creator: "@denvudd",
+      creator: "@aurda012",
     },
     icons,
-    metadataBase: new URL(
-      "https://digital-hippo-production-denvudd.up.railway.app"
-    ),
+    // metadataBase: new URL(
+    //   "https://digital-hippo-production-denvudd.up.railway.app"
+    // ),
     ...(noIndex && {
       robots: {
         index: false,

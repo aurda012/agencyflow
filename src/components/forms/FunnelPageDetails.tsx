@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { BadgeInfo, CopyPlusIcon, Info, Loader2, Trash } from "lucide-react";
 import { toast } from "sonner";
 import { SubmitHandler, useForm } from "react-hook-form";
@@ -47,7 +47,6 @@ import {
   FunnelPageDetailsValidator,
 } from "@/lib/validators/funnel-page-details";
 
-
 interface FunnelPageDetailsProps {
   defaultData?: FunnelPage;
   funnelId: string;
@@ -77,7 +76,7 @@ const FunnelPageDetails: React.FC<FunnelPageDetailsProps> = ({
     if (defaultData) {
       form.reset({ name: defaultData.name, pathName: defaultData.pathName });
     }
-  }, [defaultData]);
+  }, [defaultData, form]);
 
   const onSubmit: SubmitHandler<FunnelPageDetailsSchema> = async (values) => {
     if (order !== 0 && !values.pathName)
@@ -196,7 +195,10 @@ const FunnelPageDetails: React.FC<FunnelPageDetailsProps> = ({
                     <FormLabel className="inline-flex items-center gap-2">
                       Path Name
                       {order === 0 && (
-                        <Badge variant="secondary" className="inline-flex gap-2 items-center">
+                        <Badge
+                          variant="secondary"
+                          className="inline-flex gap-2 items-center"
+                        >
                           Default
                           <Tooltip>
                             <TooltipTrigger>
