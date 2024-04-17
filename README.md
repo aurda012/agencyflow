@@ -1,6 +1,6 @@
 <div align="center">
   <br />
-    <img src="" alt="Project Banner">  
+    <img src="https://raw.githubusercontent.com/aurda012/agencyflow/main/public/github-banner.png" alt="Project Banner">  
   <br />
 
   <div>
