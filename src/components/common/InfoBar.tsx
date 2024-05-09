@@ -48,7 +48,7 @@ const InfoBar: React.FC<InfoBarProps> = ({
     } else {
       if (!!notifications?.length) {
         const filteredNotifications = notifications?.filter(
-          (notif) => notif.subAccountId === subAccountId
+          (notif) => notif.subAccount === subAccountId
         );
 
         setAllNotifications(filteredNotifications ?? []);
