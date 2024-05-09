@@ -22,7 +22,12 @@ interface PipelineViewProps {
   subAccountId: string;
   pipelineDetails: IPipeline;
   updateLanesOrder: (lanes: ILaneWithTicketsAndTags[]) => Promise<void>;
-  updateTicketsOrder: (tickets: ITicketPopulated[]) => Promise<void>;
+  updateTicketsOrder: (
+    tickets: ITicketPopulated[],
+    originLane?: string,
+    destinationLane?: string,
+    ticket?: string
+  ) => Promise<void>;
 }
 
 const PipelineView: React.FC<PipelineViewProps> = ({
@@ -56,8 +61,8 @@ const PipelineView: React.FC<PipelineViewProps> = ({
     );
   };
 
-  const onDragEnd = (dropResult: DropResult) => {
-    const { destination, source, type } = dropResult;
+  const onDragEnd = async (dropResult: DropResult) => {
+    const { destination, source, type, draggableId } = dropResult;
 
     // checks if the destination is invalid or if the element was dropped back to its original position
     if (
@@ -80,7 +85,7 @@ const PipelineView: React.FC<PipelineViewProps> = ({
           }));
 
         setAllLanes(newLanes as ILaneWithTicketsAndTags[]);
-        updateLanesOrder(newLanes as ILaneWithTicketsAndTags[]);
+        await updateLanesOrder(newLanes as ILaneWithTicketsAndTags[]);
 
         router.refresh();
       }
@@ -108,7 +113,7 @@ const PipelineView: React.FC<PipelineViewProps> = ({
 
           originLane.tickets = newTickets; // updates the tickets in the origin lane loccaly
           setAllLanes(lanesCopyArray);
-          updateTicketsOrder(newTickets);
+          await updateTicketsOrder(newTickets);
 
           router.refresh();
         } else {
@@ -130,10 +135,12 @@ const PipelineView: React.FC<PipelineViewProps> = ({
           });
 
           setAllLanes(lanesCopyArray);
-          updateTicketsOrder([
-            ...destinationLane.tickets,
-            ...originLane.tickets,
-          ]);
+          await updateTicketsOrder(
+            [...destinationLane.tickets, ...originLane.tickets],
+            source.droppableId,
+            destination.droppableId,
+            draggableId
+          );
 
           router.refresh();
         }

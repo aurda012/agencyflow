@@ -52,9 +52,16 @@ export const updateLanesOrder = async (lanes: ILaneWithTicketsAndTags[]) => {
   }
 };
 
-export const updateTicketsOrder = async (tickets: ITicketPopulated[]) => {
+export const updateTicketsOrder = async (
+  tickets: ITicketPopulated[],
+  originLane?: string,
+  destinationLane?: string,
+  ticket?: string
+) => {
   try {
     await connectToDatabase();
+
+    console.log("Inside Update Tickets Order", tickets);
 
     await Promise.all(
       tickets.map(
@@ -65,6 +72,14 @@ export const updateTicketsOrder = async (tickets: ITicketPopulated[]) => {
           })
       )
     );
+    if (originLane && destinationLane && ticket) {
+      await Lane.findByIdAndUpdate(originLane, {
+        $pull: { tickets: ticket },
+      });
+      await Lane.findByIdAndUpdate(destinationLane, {
+        $push: { tickets: ticket },
+      });
+    }
   } catch (error: any) {
     console.log(error.message);
     throw error;

@@ -38,7 +38,6 @@ const PipelineIdPage: React.FC<PipelineIdPageProps> = async ({ params }) => {
 
   const allPipelines = await getUserPipelines(subaccountId);
   const lanes = await getLanesWithTicketsAndTags(pipelineId);
-  console.log(lanes);
 
   return (
     <Tabs defaultValue="view" className="w-full">

@@ -44,8 +44,6 @@ const SubAccountIdLayout: React.FC<SubAccountIdLayoutProps> = async ({
   }
 
   const authUser = await getAuthUserDetails();
-  console.log(authUser);
-  console.log(subaccountId);
   const hasPermission = authUser?.permissions.find(
     (permission: Partial<IPermission>) =>
       permission.access && permission.subAccountId === subaccountId

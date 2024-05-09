@@ -78,11 +78,7 @@ const TicketDetails: React.FC<TicketDetailsProps> = ({
     defaultData?.ticket?.assigned?._id || ""
   );
 
-  console.log(defaultData);
-
   const saveTimerRef = React.useRef<ReturnType<typeof setTimeout>>();
-
-  console.log({ contactList });
 
   const form = useForm<TicketDetailsSchema>({
     resolver: zodResolver(TicketDetailsValidator),

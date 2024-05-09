@@ -34,7 +34,6 @@ const AgencyIdLayout: React.FC<AgencyIdLayoutProps> = async ({
   }
 
   const notifications = await getNotifications(verify?.agencyId);
-  console.log(notifications);
 
   return (
     <div className="h-screen overflow-hidden">
