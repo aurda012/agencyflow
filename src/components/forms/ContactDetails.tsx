@@ -32,6 +32,7 @@ import {
   type ContactDetailsSchema,
   ContactDetailsValidator,
 } from "@/lib/validators/contact-details";
+import { Types } from "mongoose";
 
 interface ContactDetailsProps {
   subAccountId: string;
@@ -57,8 +58,10 @@ const ContactDetails: React.FC<ContactDetailsProps> = ({ subAccountId }) => {
   }, [data, form.reset]);
 
   const onSubmit: SubmitHandler<ContactDetailsSchema> = async (values) => {
+    const contactId = data.contact?._id || new Types.ObjectId().toString();
     try {
       const response = await upsertContact({
+        _id: contactId,
         email: values.email,
         name: values.name,
         subAccount: subAccountId,

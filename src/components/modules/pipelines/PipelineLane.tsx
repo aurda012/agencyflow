@@ -35,20 +35,16 @@ import TicketDetails from "@/components/forms/TicketDetails";
 import CustomModal from "@/components/common/CustomModal";
 
 import { cn, formatPrice } from "@/lib/utils";
-import type {
-  LaneDetails as LaneDetailsType,
-  TicketsWithTags,
-} from "@/lib/types";
 import { toast } from "sonner";
-import { ILane } from "@/database/models/lane.model";
-import { ITicket } from "@/database/models/ticket.model";
+import { ILaneWithTicketsAndTags } from "@/database/models/lane.model";
+import { ITicketPopulated } from "@/database/models/ticket.model";
 
 interface PipelaneLaneProps {
-  setAllTickets: React.Dispatch<React.SetStateAction<TicketsWithTags>>;
-  allTickets: TicketsWithTags;
-  tickets: TicketsWithTags;
+  setAllTickets: React.Dispatch<React.SetStateAction<ITicketPopulated[]>>;
+  allTickets: ITicketPopulated[];
+  tickets: ITicketPopulated[];
   pipelineId: string;
-  laneDetails: ILane;
+  laneDetails: ILaneWithTicketsAndTags;
   subAccountId: string;
   index: number;
 }
@@ -72,7 +68,7 @@ const PipelineLane: React.FC<PipelaneLaneProps> = ({
     );
   }, [tickets]);
 
-  const addNewTicket = (ticket: TicketsWithTags[0]) => {
+  const addNewTicket = (ticket: ITicketPopulated) => {
     setAllTickets([...allTickets, ticket]);
   };
 
@@ -123,7 +119,7 @@ const PipelineLane: React.FC<PipelaneLaneProps> = ({
 
   return (
     <Draggable
-      draggableId={laneDetails._id.toString()}
+      draggableId={laneDetails._id}
       index={index}
       key={laneDetails._id}
     >
@@ -189,16 +185,18 @@ const PipelineLane: React.FC<PipelaneLaneProps> = ({
                         {...provided.droppableProps}
                         ref={provided.innerRef}
                       >
-                        {tickets.map((ticket: ITicket, index: number) => (
-                          <PipelineTicket
-                            allTickets={allTickets}
-                            setAllTickets={setAllTickets}
-                            subAccountId={subAccountId}
-                            ticket={ticket}
-                            key={ticket._id.toString()}
-                            index={index}
-                          />
-                        ))}
+                        {tickets.map(
+                          (ticket: ITicketPopulated, index: number) => (
+                            <PipelineTicket
+                              allTickets={allTickets}
+                              setAllTickets={setAllTickets}
+                              subAccountId={subAccountId}
+                              ticket={ticket}
+                              key={ticket._id.toString()}
+                              index={index}
+                            />
+                          )
+                        )}
                         {provided.placeholder}
                       </div>
                     )}

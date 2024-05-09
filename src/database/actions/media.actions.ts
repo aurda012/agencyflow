@@ -31,9 +31,13 @@ export const createMedia = async (
     await connectToDatabase();
 
     const response = await Media.create({
-      subAccountId,
+      subAccount: subAccountId,
       link,
       name,
+    });
+
+    await SubAccount.findByIdAndUpdate(subAccountId, {
+      $push: { media: response._id },
     });
 
     return JSON.parse(JSON.stringify(response));

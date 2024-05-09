@@ -32,6 +32,7 @@ import {
   FunnelDetailsValidator,
 } from "@/lib/validators/funnel-details";
 import { IFunnel } from "@/database/models/funnel.model";
+import { Types } from "mongoose";
 
 interface FunnelDetailsProps {
   defaultData?: IFunnel;
@@ -72,14 +73,14 @@ const FunnelDetails: React.FC<FunnelDetailsProps> = ({
   const onSubmit = async (values: FunnelDetailsSchema) => {
     if (!subAccountId) return;
 
-    const response = await upsertFunnel(
-      {
-        ...values,
-        subAccount: subAccountId,
-        liveProducts: defaultData?.liveProducts || "[]",
-      },
-      defaultData?._id
-    );
+    const funnelId = defaultData?._id || new Types.ObjectId().toString();
+
+    const response = await upsertFunnel({
+      ...values,
+      _id: funnelId,
+      subAccount: subAccountId,
+      liveProducts: defaultData?.liveProducts || "[]",
+    });
 
     await saveActivityLogsNotification({
       agencyId: undefined,

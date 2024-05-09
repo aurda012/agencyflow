@@ -41,6 +41,7 @@ import {
   type CreatePipelineSchema,
 } from "@/lib/validators/create-pipeline";
 import { IPipeline } from "@/database/models/pipeline.model";
+import { Types } from "mongoose";
 
 interface PipelineDetailsProps {
   defaultData?: IPipeline;
@@ -97,11 +98,13 @@ const PipelineDetails: React.FC<PipelineDetailsProps> = ({
   const onSubmit: SubmitHandler<CreatePipelineSchema> = async (values) => {
     if (!subAccountId) return;
 
+    const pipelineId = defaultData?._id || new Types.ObjectId().toString();
+
     try {
       const response = await upsertPipeline({
         ...values,
-        id: defaultData?._id,
-        subAccountId: subAccountId,
+        _id: pipelineId,
+        subAccount: subAccountId,
       });
 
       await saveActivityLogsNotification({

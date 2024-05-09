@@ -4,6 +4,7 @@ import { revalidatePath } from "next/cache";
 import { connectToDatabase } from "..";
 import Funnel, { IFunnel } from "../models/funnel.model";
 import FunnelPage, { IFunnelPage } from "../models/funnelpage.model";
+import SubAccount from "../models/subaccount.model";
 
 export const getDomainContent = async (subDomainName: string) => {
   try {
@@ -62,15 +63,12 @@ export const getFunnel = async (funnelId: string) => {
   }
 };
 
-export const upsertFunnel = async (
-  funnel: Partial<IFunnel>,
-  funnelId: string
-) => {
+export const upsertFunnel = async (funnel: Partial<IFunnel>) => {
   try {
     await connectToDatabase();
 
     const response = await Funnel.findOneAndUpdate(
-      { _id: funnelId },
+      { _id: funnel._id },
       {
         $set: {
           ...funnel,
@@ -78,6 +76,10 @@ export const upsertFunnel = async (
       },
       { new: true, upsert: true }
     );
+
+    await SubAccount.findByIdAndUpdate(funnel.subAccount, {
+      $push: { funnels: response._id },
+    });
 
     return JSON.parse(JSON.stringify(response));
   } catch (error: any) {
@@ -119,14 +121,12 @@ export const upsertFunnelPage = async (
   try {
     await connectToDatabase();
 
-    const funnel = await Funnel.findById(funnelId);
-
     const response = await FunnelPage.findOneAndUpdate(
       { _id: funnelPage._id },
       {
         $set: {
           ...funnelPage,
-          funnel: funnel._id,
+          funnel: funnelId,
           content: funnelPage.content
             ? funnelPage.content
             : JSON.stringify([
@@ -142,6 +142,10 @@ export const upsertFunnelPage = async (
       },
       { new: true, upsert: true }
     );
+
+    await Funnel.findByIdAndUpdate(funnelId, {
+      $push: { funnelPages: response._id },
+    });
 
     revalidatePath(`/subaccount/${subAccountId}/funnels/${funnelId}`);
     return JSON.parse(JSON.stringify(response));

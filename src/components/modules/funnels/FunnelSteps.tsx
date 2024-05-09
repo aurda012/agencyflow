@@ -35,9 +35,10 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { IFunnelPage } from "@/database/models/funnelpage.model";
+import { IFunnel } from "@/database/models/funnel.model";
 
 interface FunnelStepsProps {
-  funnel: FunnelsForSubAccount;
+  funnel: IFunnel;
   initialPages: IFunnelPage[];
   subAccountId: string;
   funnelId: string;

@@ -11,13 +11,13 @@ import type { PriceList, TicketDetails } from "@/lib/types";
 import { IUser } from "@/database/models/user.model";
 import { IAgency } from "@/database/models/agency.model";
 import { IContact } from "@/database/models/contact.model";
-import { ITicket } from "@/database/models/ticket.model";
+import { ITicket, ITicketPopulated } from "@/database/models/ticket.model";
 
 export interface ModalData {
   user?: IUser;
   agency?: IAgency;
   contact?: IContact;
-  ticket?: ITicket;
+  ticket?: ITicketPopulated;
   plans?: {
     defaultPriceId: Plan;
     plans: PriceList["data"];

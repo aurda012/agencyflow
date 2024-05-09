@@ -4,6 +4,7 @@ import { connectToDatabase } from "..";
 import Tag, { ITag } from "../models/tag.model";
 
 export const upsertTag = async (subAccountId: string, tag: Partial<ITag>) => {
+  console.log("Tag Before Upsert: ", tag);
   try {
     await connectToDatabase();
     const response = await Tag.findOneAndUpdate(
@@ -19,7 +20,7 @@ export const upsertTag = async (subAccountId: string, tag: Partial<ITag>) => {
       },
       { new: true, upsert: true }
     );
-
+    console.log("Tag: ", response);
     return JSON.parse(JSON.stringify(response));
   } catch (error: any) {
     console.log(error.message);

@@ -28,10 +28,11 @@ import {
   type LaneDetailsSchema,
   LaneDetailsValidator,
 } from "@/lib/validators/lane-details";
-import { ILane } from "@/database/models/lane.model";
+import { ILane, ILaneWithTicketsAndTags } from "@/database/models/lane.model";
+import { Types } from "mongoose";
 
 interface LaneDetailsProps {
-  defaultData?: ILane;
+  defaultData?: ILaneWithTicketsAndTags;
   pipelineId: string;
 }
 
@@ -65,10 +66,14 @@ const LaneDetails: React.FC<LaneDetailsProps> = ({
   const onSubmit: SubmitHandler<LaneDetailsSchema> = async (values) => {
     if (!pipelineId) return;
 
+    const laneId = defaultData?._id
+      ? defaultData._id
+      : new Types.ObjectId().toString();
+
     try {
       const response = await upsertLane({
         ...values,
-        _id: defaultData?._id,
+        _id: laneId,
         pipeline: pipelineId,
         order: defaultData?.order,
       });
@@ -79,7 +84,7 @@ const LaneDetails: React.FC<LaneDetailsProps> = ({
       await saveActivityLogsNotification({
         agencyId: undefined,
         description: `Updated a lane | ${response?.name}`,
-        subAccountId: pipelineDetails.subAccountId,
+        subAccountId: pipelineDetails.subAccount,
       });
 
       toast.success("Success", {

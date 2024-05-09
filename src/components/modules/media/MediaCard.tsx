@@ -50,7 +50,7 @@ const MediaCard: React.FC<MediaCardProps> = ({ file }) => {
     await saveActivityLogsNotification({
       agencyId: undefined,
       description: `Deleted a media file | ${response?.name}`,
-      subAccountId: response.subAccountId,
+      subAccountId: response.subAccount,
     });
 
     toast.success("Deleted File", {

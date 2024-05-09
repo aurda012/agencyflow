@@ -37,6 +37,7 @@ import {
 import { Tag } from "../ui/tag";
 import { cn } from "@/lib/utils";
 import { ITag } from "@/database/models/tag.model";
+import { Types } from "mongoose";
 
 interface TagDetailsProps {
   subAccountId: string;
@@ -77,7 +78,7 @@ const TagDetails: React.FC<TagDetailsProps> = ({
 
   React.useEffect(() => {
     getSelectedTags(selectedTags);
-  }, [selectedTags]);
+  }, [selectedTags, getSelectedTags]);
 
   const handleDeleteSelection = (tagId: string) => {
     setSelectedTags(() => selectedTags.filter((tag) => tag._id !== tagId));
@@ -102,13 +103,14 @@ const TagDetails: React.FC<TagDetailsProps> = ({
       return null;
     }
 
-    const tagData: TagType = {
-      id: uuidv4(),
+    const tagData: ITag = {
+      _id: new Types.ObjectId().toString(),
       createdAt: new Date(),
       updatedAt: new Date(),
       color: selectedColor,
       name: value,
-      subAccountId,
+      subAccount: subAccountId,
+      tickets: [],
     };
 
     setTags([...tags, tagData]);

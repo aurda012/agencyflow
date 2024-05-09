@@ -52,17 +52,16 @@ import { Tag } from "@/components/ui/tag";
 import CustomModal from "@/components/common/CustomModal";
 import TicketDetails from "@/components/forms/TicketDetails";
 
-import type { TicketsWithTags } from "@/lib/types";
 import { formatPrice } from "@/lib/utils";
-import { ITicket } from "@/database/models/ticket.model";
+import { ITicketPopulated } from "@/database/models/ticket.model";
 import { ITag } from "@/database/models/tag.model";
 import { IContact } from "@/database/models/contact.model";
 import { IUser } from "@/database/models/user.model";
 
 interface PipelineTicketProps {
-  setAllTickets: React.Dispatch<React.SetStateAction<TicketsWithTags>>;
-  allTickets: TicketsWithTags;
-  ticket: ITicket;
+  setAllTickets: React.Dispatch<React.SetStateAction<ITicketPopulated[]>>;
+  allTickets: ITicketPopulated[];
+  ticket: ITicketPopulated;
   subAccountId: string;
   index: number;
 }
@@ -80,9 +79,9 @@ const PipelineTicket: React.FC<PipelineTicketProps> = ({
   const customer = ticket.customer as IContact;
   const assigned = ticket.assigned as IUser;
 
-  const editNewTicket = (ticket: ITicket) => {
+  const editNewTicket = (ticket: ITicketPopulated) => {
     setAllTickets(() => {
-      return allTickets.map((t: ITicket) => {
+      return allTickets.map((t: ITicketPopulated) => {
         if (t._id === ticket._id) {
           return ticket;
         }
@@ -97,9 +96,7 @@ const PipelineTicket: React.FC<PipelineTicketProps> = ({
       <CustomModal title="Update Ticket Details">
         <TicketDetails
           getNewTicket={editNewTicket}
-          laneId={
-            typeof ticket.lane === "string" ? ticket.lane : ticket.lane._id
-          }
+          laneId={ticket.lane}
           subAccountId={subAccountId}
         />
       </CustomModal>,
@@ -112,7 +109,7 @@ const PipelineTicket: React.FC<PipelineTicketProps> = ({
 
   const handleDeleteTicket = async () => {
     try {
-      setAllTickets((tickets: ITicket[]) =>
+      setAllTickets((tickets: ITicketPopulated[]) =>
         tickets.filter((t) => t._id !== ticket._id)
       );
 
@@ -136,7 +133,7 @@ const PipelineTicket: React.FC<PipelineTicketProps> = ({
   };
 
   return (
-    <Draggable draggableId={ticket._id.toString()} index={index}>
+    <Draggable draggableId={ticket._id} index={index}>
       {(provided, snapshot) => {
         if (snapshot.isDragging) {
           const offset = { x: 300, y: 20 };
@@ -212,7 +209,9 @@ const PipelineTicket: React.FC<PipelineTicketProps> = ({
                               <Contact2 className="mr-2 h-4 w-4 opacity-70" />
                               <span className="text-xs text-muted-foreground">
                                 Joined{" "}
-                                {customer?.createdAt.toLocaleDateString()}
+                                {new Date(
+                                  customer?.createdAt
+                                ).toLocaleDateString()}
                               </span>
                             </div>
                           </div>
@@ -239,7 +238,6 @@ const PipelineTicket: React.FC<PipelineTicketProps> = ({
                             {assigned?.name}
                           </span>
                         )}
-                        x
                       </div>
                     </div>
                     {!!ticket.value && (

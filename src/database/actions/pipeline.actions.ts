@@ -66,7 +66,7 @@ export const createPipeline = async (subAccountId: string) => {
   }
 };
 
-export const upsertPipeline = async (pipeline: IPipeline) => {
+export const upsertPipeline = async (pipeline: Partial<IPipeline>) => {
   try {
     await connectToDatabase();
     const response = await Pipeline.findOneAndUpdate(

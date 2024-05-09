@@ -1,13 +1,16 @@
+import type { Metadata } from "next";
+import NextTopLoader from "nextjs-toploader";
+import { Toaster } from "sonner";
+
+import { DM_Mono } from "next/font/google";
+import { DM_Sans } from "next/font/google";
+
 import { ThemeProvider } from "@/components/providers/ThemeProvider";
 import { ModalProvider } from "@/components/providers/ModalProvider";
 
-import { DM_Sans } from "next/font/google";
-import { DM_Mono } from "next/font/google";
 import { cn } from "@/lib/utils";
-import type { Metadata } from "next";
 
 import "./globals.css";
-import { Toaster } from "sonner";
 
 export const metadata: Metadata = {
   title: "AgencyFlow",
@@ -41,6 +44,13 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
+          <NextTopLoader
+            showSpinner={false}
+            color="#006eff"
+            shadow="0 0 10px #006eff,0 0 5px #006eff"
+            crawlSpeed={150}
+            speed={150}
+          />
           <ModalProvider>{children}</ModalProvider>
         </ThemeProvider>
         <Toaster richColors />

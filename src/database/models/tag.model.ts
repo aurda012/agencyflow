@@ -2,13 +2,14 @@ import { Document, Schema, model, models, Types } from "mongoose";
 import { ISubAccount } from "./subaccount.model";
 import { ITicket } from "./ticket.model";
 
-export interface ITag extends Document {
+export interface ITag {
+  _id: string;
   createdAt: Date;
   updatedAt: Date;
   name: string;
   color: string;
   subAccount: Types.ObjectId | ISubAccount | string; // reference to the SubAccount model
-  tickets: Types.ObjectId[] | ITicket[] | string[]; // Array of references to the Ticket model
+  tickets: Types.ObjectId[] | ITicket[] | string[] | []; // Array of references to the Ticket model
 }
 
 const TagSchema = new Schema({

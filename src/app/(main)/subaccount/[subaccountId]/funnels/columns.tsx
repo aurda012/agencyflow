@@ -28,7 +28,11 @@ export const columns: ColumnDef<FunnelsForSubAccount>[] = [
     accessorKey: "updatedAt",
     header: "Last Updated",
     cell: ({ row }) => {
-      const date = ` ${row.original.updatedAt.toDateString()} ${row.original.updatedAt.toLocaleTimeString()} `;
+      const date = ` ${new Date(
+        row.original.updatedAt
+      ).toDateString()} ${new Date(
+        row.original.updatedAt
+      ).toLocaleTimeString()} `;
       return <span className="text-muted-foreground">{date}</span>;
     },
   },

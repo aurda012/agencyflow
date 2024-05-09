@@ -11,21 +11,18 @@ import CustomModal from "@/components/common/CustomModal";
 import LaneDetails from "@/components/forms/LaneDetails";
 import PipelineLane from "./PipelineLane";
 
-import type {
-  LaneDetails as LaneDetailsType,
-  PipelineDetailsWithLanesCardsTagsTickets,
-  TicketAndTags,
-} from "@/lib/types";
-import { ILane } from "@/database/models/lane.model";
-import { ITicket } from "@/database/models/ticket.model";
+import type { PipelineDetailsWithLanesCardsTagsTickets } from "@/lib/types";
+import { ILaneWithTicketsAndTags } from "@/database/models/lane.model";
+import { ITicketPopulated } from "@/database/models/ticket.model";
+import { IPipeline } from "@/database/models/pipeline.model";
 
 interface PipelineViewProps {
-  lanes: ILane[];
+  lanes: ILaneWithTicketsAndTags[];
   pipelineId: string;
   subAccountId: string;
-  pipelineDetails: PipelineDetailsWithLanesCardsTagsTickets;
-  updateLanesOrder: (lanes: ILane[]) => Promise<void>;
-  updateTicketsOrder: (tickets: ITicket[]) => Promise<void>;
+  pipelineDetails: IPipeline;
+  updateLanesOrder: (lanes: ILaneWithTicketsAndTags[]) => Promise<void>;
+  updateTicketsOrder: (tickets: ITicketPopulated[]) => Promise<void>;
 }
 
 const PipelineView: React.FC<PipelineViewProps> = ({
@@ -39,8 +36,9 @@ const PipelineView: React.FC<PipelineViewProps> = ({
   const router = useRouter();
   const { setOpen } = useModal();
 
-  const [allLanes, setAllLanes] = React.useState<ILane[]>(lanes);
-  const [allTickets, setAllTickets] = React.useState<TicketAndTags[]>([]);
+  const [allLanes, setAllLanes] =
+    React.useState<ILaneWithTicketsAndTags[]>(lanes);
+  const [allTickets, setAllTickets] = React.useState<ITicketPopulated[]>([]);
 
   React.useEffect(() => {
     setAllLanes(lanes);
@@ -81,8 +79,8 @@ const PipelineView: React.FC<PipelineViewProps> = ({
             order: index,
           }));
 
-        setAllLanes(newLanes as ILane[]);
-        updateLanesOrder(newLanes as ILane[]);
+        setAllLanes(newLanes as ILaneWithTicketsAndTags[]);
+        updateLanesOrder(newLanes as ILaneWithTicketsAndTags[]);
 
         router.refresh();
       }
@@ -123,7 +121,7 @@ const PipelineView: React.FC<PipelineViewProps> = ({
 
           destinationLane.tickets.splice(destination.index, 0, {
             ...currentTicket,
-            laneId: destination.droppableId,
+            lane: destination.droppableId,
           });
 
           // rearrange destination tickets

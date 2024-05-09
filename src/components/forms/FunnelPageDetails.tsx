@@ -47,6 +47,7 @@ import {
   FunnelPageDetailsValidator,
 } from "@/lib/validators/funnel-page-details";
 import { IFunnelPage } from "@/database/models/funnelpage.model";
+import { Types } from "mongoose";
 
 interface FunnelPageDetailsProps {
   defaultData?: IFunnelPage;
@@ -89,7 +90,7 @@ const FunnelPageDetails: React.FC<FunnelPageDetailsProps> = ({
     try {
       const response = await upsertFunnelPage(subAccountId, funnelId, {
         ...values,
-        id: defaultData?._id || uuidv4(),
+        _id: defaultData?._id || new Types.ObjectId().toString(),
         order: defaultData?.order || order,
         pathName: values.pathName || "",
       });

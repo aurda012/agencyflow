@@ -46,7 +46,7 @@ export const upsertSubAccount = async (
     if (newSubAccount) {
       if (!subAccount.companyEmail) return null;
 
-      const subAccountId = new Types.ObjectId(subAccount._id);
+      const subAccountId = subAccount._id || new Types.ObjectId().toString();
 
       const agencyOwner = await User.findOne({
         agency: subAccount.agency,

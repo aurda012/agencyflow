@@ -1,5 +1,5 @@
 import { Document, Schema, model, models, Types } from "mongoose";
-import { ITicket } from "./ticket.model";
+import { ITicket, ITicketPopulated } from "./ticket.model";
 import { IPipeline } from "./pipeline.model";
 
 export interface ILane extends Document {
@@ -10,6 +10,17 @@ export interface ILane extends Document {
   color: string;
   pipeline: Types.ObjectId | IPipeline | string;
   tickets: Types.ObjectId[] | ITicket[] | string[];
+}
+
+export interface ILaneWithTicketsAndTags {
+  _id: string;
+  createdAt: Date;
+  updatedAt: Date;
+  name: string;
+  order: number;
+  color: string;
+  pipeline: string;
+  tickets: ITicketPopulated[];
 }
 
 const LaneSchema = new Schema({

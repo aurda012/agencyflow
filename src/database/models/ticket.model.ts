@@ -17,6 +17,20 @@ export interface ITicket extends Document {
   assigned: Types.ObjectId | IUser | string;
 }
 
+export interface ITicketPopulated {
+  _id: string;
+  createdAt: Date;
+  updatedAt: Date;
+  name: string;
+  order: number;
+  value: number;
+  description: string;
+  lane: string;
+  customer: IContact;
+  tags: ITag[];
+  assigned: IUser;
+}
+
 const TicketSchema = new Schema({
   createdAt: { type: Date, default: Date.now },
   updatedAt: { type: Date, default: Date.now },

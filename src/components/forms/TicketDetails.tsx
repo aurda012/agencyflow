@@ -6,7 +6,6 @@ import { SubmitHandler, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "sonner";
 import { Check, ChevronsUpDownIcon, User2 } from "lucide-react";
-import type { Contact, Tag, User } from "@prisma/client";
 
 import { getSubAccountTeamMembers } from "@/database/actions/subaccount.actions";
 import { searchContacts } from "@/database/actions/contact.actions";
@@ -14,7 +13,6 @@ import { saveActivityLogsNotification } from "@/database/actions/notification.ac
 import { upsertTicket } from "@/database/actions/ticket.actions";
 
 import { useModal } from "@/hooks/use-modal";
-import type { TicketsWithTags } from "@/lib/types";
 import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
 import {
   Form,
@@ -32,6 +30,7 @@ import {
   CommandGroup,
   CommandInput,
   CommandItem,
+  CommandList,
 } from "../ui/command";
 import { Input } from "../ui/input";
 import { Textarea } from "../ui/textarea";
@@ -50,16 +49,16 @@ import {
   TicketDetailsValidator,
 } from "@/lib/validators/ticket-details";
 import { cn } from "@/lib/utils";
-import { sub } from "date-fns";
 import { IUser } from "@/database/models/user.model";
 import { IContact } from "@/database/models/contact.model";
 import { ITag } from "@/database/models/tag.model";
-import { ITicket } from "@/database/models/ticket.model";
+import { ITicketPopulated } from "@/database/models/ticket.model";
+import { Types } from "mongoose";
 
 interface TicketDetailsProps {
   laneId: string;
   subAccountId: string;
-  getNewTicket: (ticket: ITicket) => void;
+  getNewTicket: (ticket: ITicketPopulated) => void;
 }
 
 const TicketDetails: React.FC<TicketDetailsProps> = ({
@@ -76,12 +75,14 @@ const TicketDetails: React.FC<TicketDetailsProps> = ({
   const [contactId, setContactId] = React.useState<string>("");
   const [search, setSearch] = React.useState<string>("");
   const [assignedTo, setAssignedTo] = React.useState<string>(
-    typeof defaultData?.ticket?.assigned === "string"
-      ? defaultData?.ticket?.assigned
-      : defaultData?.ticket?.assigned._id
+    defaultData?.ticket?.assigned?._id || ""
   );
 
+  console.log(defaultData);
+
   const saveTimerRef = React.useRef<ReturnType<typeof setTimeout>>();
+
+  console.log({ contactList });
 
   const form = useForm<TicketDetailsSchema>({
     resolver: zodResolver(TicketDetailsValidator),
@@ -120,23 +121,24 @@ const TicketDetails: React.FC<TicketDetailsProps> = ({
             : defaultData.ticket.customer._id
         );
       }
-
-      const fetchContacts = async () => {
-        const response = await searchContacts(
-          typeof defaultData.ticket?.customer === "string"
-            ? defaultData.ticket.customer
-            : "",
-          subAccountId
-        );
-        setContactList(response);
-      };
-
-      fetchContacts();
     }
-  }, [defaultData]);
+    const fetchContacts = async () => {
+      const response = await searchContacts(
+        typeof defaultData.ticket?.customer === "string"
+          ? defaultData.ticket.customer
+          : "",
+        subAccountId
+      );
+      setContactList(response);
+    };
+
+    fetchContacts();
+  }, [defaultData, form, subAccountId]);
 
   const onSubmit: SubmitHandler<TicketDetailsSchema> = async (values) => {
     if (!laneId) return;
+
+    const ticketId = defaultData.ticket?._id || new Types.ObjectId().toString();
 
     try {
       const response = await upsertTicket(
@@ -145,7 +147,7 @@ const TicketDetails: React.FC<TicketDetailsProps> = ({
           name: values.name,
           description: values.description,
           lane: laneId,
-          id: defaultData.ticket?._id,
+          _id: ticketId,
           assigned: assignedTo,
           ...(contactId
             ? {
@@ -339,7 +341,7 @@ const TicketDetails: React.FC<TicketDetailsProps> = ({
                         No Customer found.
                       </div>
                     )}
-                    <CommandGroup>
+                    <CommandList>
                       {contactList.map((contact) => (
                         <CommandItem
                           key={contact._id}
@@ -361,7 +363,7 @@ const TicketDetails: React.FC<TicketDetailsProps> = ({
                           />
                         </CommandItem>
                       ))}
-                    </CommandGroup>
+                    </CommandList>
                   </Command>
                 </PopoverContent>
               </Popover>

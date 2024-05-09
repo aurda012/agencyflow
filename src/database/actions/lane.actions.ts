@@ -2,9 +2,10 @@
 
 import { connectToDatabase } from "..";
 import Contact from "../models/contact.model";
-import Lane, { ILane } from "../models/lane.model";
+import Lane, { ILane, ILaneWithTicketsAndTags } from "../models/lane.model";
+import Pipeline from "../models/pipeline.model";
 import Tag from "../models/tag.model";
-import Ticket, { ITicket } from "../models/ticket.model";
+import Ticket, { ITicket, ITicketPopulated } from "../models/ticket.model";
 import User from "../models/user.model";
 
 export const getLanesWithTicketsAndTags = async (pipelineId: string) => {
@@ -12,7 +13,7 @@ export const getLanesWithTicketsAndTags = async (pipelineId: string) => {
     await connectToDatabase();
 
     const lane = await Lane.find({
-      pipelineId,
+      pipeline: pipelineId,
     })
       .sort({ order: "asc" })
       .populate({
@@ -35,7 +36,7 @@ export const getLanesWithTicketsAndTags = async (pipelineId: string) => {
   }
 };
 
-export const updateLanesOrder = async (lanes: ILane[]) => {
+export const updateLanesOrder = async (lanes: ILaneWithTicketsAndTags[]) => {
   try {
     await connectToDatabase();
 
@@ -51,7 +52,7 @@ export const updateLanesOrder = async (lanes: ILane[]) => {
   }
 };
 
-export const updateTicketsOrder = async (tickets: ITicket[]) => {
+export const updateTicketsOrder = async (tickets: ITicketPopulated[]) => {
   try {
     await connectToDatabase();
 
@@ -107,6 +108,10 @@ export const upsertLane = async (lane: Partial<ILane>) => {
       },
       { new: true, upsert: true }
     );
+
+    await Pipeline.findByIdAndUpdate(lane.pipeline, {
+      $push: { lanes: response._id },
+    });
 
     return JSON.parse(JSON.stringify(response));
   } catch (error: any) {

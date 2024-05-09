@@ -12,15 +12,15 @@ export const searchContacts = async (
   try {
     await connectToDatabase();
 
-    const response = await Contact.find([
-      { subAccount: subAccount },
-      {
-        name: {
-          $regex: searchTerms,
-          $options: "i", // Case-insensitive search
-        },
+    const response = await Contact.find({
+      subAccount: subAccount,
+      name: {
+        $regex: searchTerms,
+        $options: "i", // Case-insensitive search
       },
-    ]);
+    });
+
+    console.log("Contacts: ", response);
 
     return JSON.parse(JSON.stringify(response));
   } catch (error: any) {
@@ -60,6 +60,10 @@ export const upsertContact = async (contact: Partial<IContact>) => {
       },
       { new: true, upsert: true }
     );
+
+    await SubAccount.findByIdAndUpdate(contact.subAccount, {
+      $push: { contacts: response._id },
+    });
 
     return JSON.parse(JSON.stringify(response));
   } catch (error: any) {

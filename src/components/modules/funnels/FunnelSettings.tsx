@@ -1,5 +1,4 @@
 import React from "react";
-import { type Funnel } from "@prisma/client";
 import { redirect } from "next/navigation";
 
 import { getConnectAccountProducts } from "@/lib/stripe/stripe-actions";
@@ -29,8 +28,9 @@ const FunnelSettings: React.FC<FunnelSettingsProps> = async ({
   const subaccountDetails = await getSubAccountDetails(subAccountId);
 
   if (!subaccountDetails) redirect("/subaccount/unauthorized");
-  if (!subaccountDetails.connectAccountId)
+  if (!subaccountDetails.connectAccountId) {
     redirect(`/subaccount/${subAccountId}/launchpad`);
+  }
 
   const products = await getConnectAccountProducts(
     subaccountDetails.connectAccountId

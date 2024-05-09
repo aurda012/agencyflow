@@ -13,6 +13,7 @@ import InfoBar from "@/components/common/InfoBar";
 import { NotificationsWithUser } from "@/lib/types";
 import { IPermission } from "@/database/models/permission.model";
 import { INotification } from "@/database/models/notification.model";
+import { sub } from "date-fns";
 
 interface SubAccountIdLayoutProps {
   children: React.ReactNode;
@@ -44,6 +45,7 @@ const SubAccountIdLayout: React.FC<SubAccountIdLayoutProps> = async ({
 
   const authUser = await getAuthUserDetails();
   console.log(authUser);
+  console.log(subaccountId);
   const hasPermission = authUser?.permissions.find(
     (permission: Partial<IPermission>) =>
       permission.access && permission.subAccountId === subaccountId

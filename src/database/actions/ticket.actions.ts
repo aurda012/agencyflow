@@ -61,6 +61,8 @@ export const upsertTicket = async (ticket: Partial<ITicket>, tags: ITag[]) => {
       order = ticket.order;
     }
 
+    const tagIds = tags.map((tag) => tag._id);
+
     const response = await Ticket.findByIdAndUpdate(
       ticket._id,
       {
@@ -70,7 +72,7 @@ export const upsertTicket = async (ticket: Partial<ITicket>, tags: ITag[]) => {
         },
         $push: {
           tags: {
-            $each: tags,
+            $each: tagIds,
           },
         },
       },
@@ -80,6 +82,32 @@ export const upsertTicket = async (ticket: Partial<ITicket>, tags: ITag[]) => {
       .populate({ path: "tags", model: Tag })
       .populate({ path: "assigned", model: User })
       .populate({ path: "customer", model: Contact });
+
+    await Promise.all(
+      tagIds.map(async (tagId) => {
+        await Tag.findByIdAndUpdate(tagId, {
+          $push: {
+            tickets: response._id,
+          },
+        });
+      })
+    );
+
+    await Lane.findByIdAndUpdate(response.lane._id, {
+      $push: {
+        tickets: response._id,
+      },
+    });
+
+    if (ticket.customer) {
+      await Contact.findByIdAndUpdate(ticket.customer, {
+        $push: {
+          tickets: response._id,
+        },
+      });
+    }
+
+    console.log("Ticket: ", response);
 
     return JSON.parse(JSON.stringify(response));
   } catch (error: any) {

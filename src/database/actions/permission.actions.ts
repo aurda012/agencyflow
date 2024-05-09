@@ -44,7 +44,7 @@ export const changeUserPermissions = async (
         $set: {
           access,
           subAccount: subAccountId,
-          subAccountId: JSON.stringify(subAccountId),
+          subAccountId: subAccountId,
           email: userEmail,
         },
       },
