@@ -40,9 +40,9 @@ const Media: React.FC<MediaProps> = ({
           )}
           <CommandGroup>
             <div className="flex flex-wrap gap-4 pt-4 bg-transparent">
-              {data?.media.map((file) => (
+              {data?.media.map((file: any) => (
                 <CommandItem
-                  key={file.id}
+                  key={file._id}
                   className="p-0 max-w-[300px] w-full bg-transparent rounded-lg font-medium text-white"
                 >
                   <MediaCard file={file} />

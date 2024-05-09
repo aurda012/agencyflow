@@ -3,8 +3,11 @@
 import React from "react";
 import { useRouter } from "next/navigation";
 
-import { deleteSubAccount, getSubAccountDetails } from "@/queries/subaccount";
-import { saveActivityLogsNotification } from "@/queries/notifications";
+import {
+  deleteSubAccount,
+  getSubAccountDetails,
+} from "@/database/actions/subaccount.actions";
+import { saveActivityLogsNotification } from "@/database/actions/notification.actions";
 
 import { AlertDialogAction } from "@/components/ui/alert-dialog";
 

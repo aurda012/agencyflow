@@ -3,7 +3,7 @@ import { redirect } from "next/navigation";
 import { Decimal } from "@prisma/client/runtime/library";
 import { format } from "date-fns";
 
-import { getSubAccountWithContacts } from "@/queries/contacts";
+import { getSubAccountWithContacts } from "@/database/actions/contact.actions";
 
 import BlurPage from "@/components/common/BlurPage";
 import { constructMetadata, formatPrice } from "@/lib/utils";
@@ -64,9 +64,9 @@ const SubAccountContactPage: React.FC<SubAccountContactPageProps> = async ({
         </TableHeader>
         <TableBody className="font-medium truncate">
           {!!allContacts?.length &&
-            allContacts.map((contact) => {
+            allContacts.map((contact: any) => {
               return (
-                <TableRow key={contact.id}>
+                <TableRow key={contact._id}>
                   <TableCell>
                     <Avatar>
                       <AvatarImage alt={contact.name} />

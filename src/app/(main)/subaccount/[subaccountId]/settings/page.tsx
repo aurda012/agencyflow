@@ -2,14 +2,15 @@ import React from "react";
 import { currentUser } from "@clerk/nextjs";
 import { redirect } from "next/navigation";
 
-import { getAuthUserDetails } from "@/queries/auth";
-import { getSubAccountDetails } from "@/queries/subaccount";
-import { getAgencyDetails } from "@/queries/agency";
+import { getAuthUserDetails } from "@/database/actions/auth.actions";
+import { getSubAccountDetails } from "@/database/actions/subaccount.actions";
+import { getAgencyDetails } from "@/database/actions/agency.actions";
 
 import BlurPage from "@/components/common/BlurPage";
 import SubAccountDetails from "@/components/forms/SubAccountDetails";
 import { Agency } from "@prisma/client";
 import { constructMetadata } from "@/lib/utils";
+import { IAgency } from "@/database/models/agency.model";
 
 interface SubAccountSettingsPageProps {
   params: {
@@ -34,16 +35,16 @@ const SubAccountSettingsPage: React.FC<SubAccountSettingsPageProps> = async ({
 
   if (!subAccount) redirect("/subaccount/unauthorized");
 
-  const agencyDetails = await getAgencyDetails(subAccount.agencyId);
+  const agencyDetails = await getAgencyDetails(subAccount.agency);
 
   return (
     <BlurPage>
       <div className="flex justify-center items-center mt-4">
         <div className="max-w-4xl w-full flex flex-col gap-8">
           <SubAccountDetails
-            agencyDetails={agencyDetails as Agency}
+            agencyDetails={agencyDetails as IAgency}
             details={subAccount}
-            userId={userDetails.id}
+            userId={userDetails._id}
             userName={userDetails.name}
           />
         </div>

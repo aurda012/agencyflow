@@ -3,9 +3,9 @@ import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { Trash } from "lucide-react";
 
-import { getFunnel } from "@/queries/funnels";
-import { upsertContact } from "@/queries/contacts";
-import { saveActivityLogsNotification } from "@/queries/notifications";
+import { getFunnel } from "@/database/actions/funnel.actions";
+import { upsertContact } from "@/database/actions/contact.actions";
+import { saveActivityLogsNotification } from "@/database/actions/notification.actions";
 
 import { useEditor } from "@/hooks/use-editor";
 import { Badge } from "@/components/ui/badge";
@@ -14,6 +14,7 @@ import EditorContactForm from "@/components/forms/EditorContactForm";
 import { cn } from "@/lib/utils";
 import type { EditorElement } from "@/lib/types/editor";
 import type { ContactDetailsSchema } from "@/lib/validators/contact-details";
+import { IFunnelPage } from "@/database/models/funnelpage.model";
 
 interface EditorContactForm {
   element: EditorElement;
@@ -50,7 +51,7 @@ const EditorContact: React.FC<EditorContactForm> = ({ element }) => {
 
     if (funnelPages.funnelPages.length > pageDetails.order + 1) {
       const nextPage = funnelPages.funnelPages.find(
-        (page) => page.order === pageDetails.order + 1
+        (page: IFunnelPage) => page.order === pageDetails.order + 1
       );
 
       if (!nextPage) return undefined;
@@ -73,7 +74,7 @@ const EditorContact: React.FC<EditorContactForm> = ({ element }) => {
       try {
         const response = await upsertContact({
           ...values,
-          subAccountId,
+          subAccount: subAccountId,
         });
 
         await saveActivityLogsNotification({

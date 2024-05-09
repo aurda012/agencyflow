@@ -7,9 +7,9 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "sonner";
 import { Lane } from "@prisma/client";
 
-import { getPipelineDetails } from "@/queries/pipelines";
-import { upsertLane } from "@/queries/lanes";
-import { saveActivityLogsNotification } from "@/queries/notifications";
+import { getPipelineDetails } from "@/database/actions/pipeline.actions";
+import { upsertLane } from "@/database/actions/lane.actions";
+import { saveActivityLogsNotification } from "@/database/actions/notification.actions";
 
 import { useModal } from "@/hooks/use-modal";
 import {
@@ -28,9 +28,10 @@ import {
   type LaneDetailsSchema,
   LaneDetailsValidator,
 } from "@/lib/validators/lane-details";
+import { ILane } from "@/database/models/lane.model";
 
 interface LaneDetailsProps {
-  defaultData?: Lane;
+  defaultData?: ILane;
   pipelineId: string;
 }
 
@@ -67,8 +68,8 @@ const LaneDetails: React.FC<LaneDetailsProps> = ({
     try {
       const response = await upsertLane({
         ...values,
-        id: defaultData?.id,
-        pipelineId: pipelineId,
+        _id: defaultData?._id,
+        pipeline: pipelineId,
         order: defaultData?.order,
       });
 

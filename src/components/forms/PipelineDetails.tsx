@@ -5,8 +5,11 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "sonner";
 import { SubmitHandler, useForm } from "react-hook-form";
 
-import { deletePipeline, upsertPipeline } from "@/queries/pipelines";
-import { saveActivityLogsNotification } from "@/queries/notifications";
+import {
+  deletePipeline,
+  upsertPipeline,
+} from "@/database/actions/pipeline.actions";
+import { saveActivityLogsNotification } from "@/database/actions/notification.actions";
 
 import { useModal } from "@/hooks/use-modal";
 import {
@@ -37,9 +40,10 @@ import {
   CreatePipelineValidator,
   type CreatePipelineSchema,
 } from "@/lib/validators/create-pipeline";
+import { IPipeline } from "@/database/models/pipeline.model";
 
 interface PipelineDetailsProps {
-  defaultData?: Pipeline;
+  defaultData?: IPipeline;
   subAccountId: string;
   pipelineId: string;
 }
@@ -96,7 +100,7 @@ const PipelineDetails: React.FC<PipelineDetailsProps> = ({
     try {
       const response = await upsertPipeline({
         ...values,
-        id: defaultData?.id,
+        id: defaultData?._id,
         subAccountId: subAccountId,
       });
 

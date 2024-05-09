@@ -16,7 +16,7 @@ import {
 } from "lucide-react";
 import { type FunnelPage } from "@prisma/client";
 
-import { upsertFunnelPage } from "@/queries/funnels";
+import { upsertFunnelPage } from "@/database/actions/funnel.actions";
 
 import { useModal } from "@/hooks/use-modal";
 import { AlertDialog } from "@/components/ui/alert-dialog";
@@ -34,10 +34,11 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { IFunnelPage } from "@/database/models/funnelpage.model";
 
 interface FunnelStepsProps {
   funnel: FunnelsForSubAccount;
-  initialPages: FunnelPage[];
+  initialPages: IFunnelPage[];
   subAccountId: string;
   funnelId: string;
 }
@@ -49,11 +50,11 @@ const FunnelSteps: React.FC<FunnelStepsProps> = ({
   subAccountId,
 }) => {
   const { setOpen } = useModal();
-  const [clickedPage, setClickedPage] = React.useState<FunnelPage | undefined>(
+  const [clickedPage, setClickedPage] = React.useState<IFunnelPage | undefined>(
     initialPages[0]
   );
   const [currentPages, setCurrentPages] =
-    React.useState<FunnelPage[]>(initialPages);
+    React.useState<IFunnelPage[]>(initialPages);
 
   const onDragEnd = (dropResult: DropResult) => {
     const { destination, source } = dropResult;
@@ -76,12 +77,12 @@ const FunnelSteps: React.FC<FunnelStepsProps> = ({
         order: index,
       }));
 
-    setCurrentPages(newPagesOrder);
+    setCurrentPages(newPagesOrder as IFunnelPage[]);
 
     newPagesOrder.forEach(async (page, index) => {
       try {
         await upsertFunnelPage(subAccountId, funnelId, {
-          id: page.id,
+          _id: page._id,
           order: index,
           name: page.name,
         });
@@ -116,14 +117,14 @@ const FunnelSteps: React.FC<FunnelStepsProps> = ({
                       {currentPages.map((page, index) => (
                         <div
                           className="relative"
-                          key={page.id}
+                          key={page._id}
                           onClick={() => setClickedPage(page)}
                         >
                           <FunnelStepCard
                             funnelPage={page}
                             index={index}
                             totalPages={currentPages.length - 1}
-                            activePage={page.id === clickedPage?.id}
+                            activePage={page._id === clickedPage?._id}
                           />
                         </div>
                       ))}
@@ -170,7 +171,7 @@ const FunnelSteps: React.FC<FunnelStepsProps> = ({
                 <CardDescription className="flex flex-col gap-4 mt-4">
                   <div className="border-2 rounded-lg sm:w-80 w-full overflow-clip">
                     <Link
-                      href={`/subaccount/${subAccountId}/funnels/${funnelId}/editor/${clickedPage?.id}`}
+                      href={`/subaccount/${subAccountId}/funnels/${funnelId}/editor/${clickedPage?._id}`}
                     >
                       <div className="cursor-pointer group-hover:opacity-30 w-full">
                         <FunnelPagePlaceholder />

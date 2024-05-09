@@ -11,8 +11,11 @@ import {
   ShoppingCart,
 } from "lucide-react";
 
-import { getAgencyDetails, updateAgencyConnectedId } from "@/queries/agency";
-import { getSubAccountsByAgency } from "@/queries/subaccount";
+import {
+  getAgencyDetails,
+  updateAgencyConnectedId,
+} from "@/database/actions/agency.actions";
+import { getSubAccountsByAgency } from "@/database/actions/subaccount.actions";
 
 import { AreaChart } from "@/components/ui/area-chart";
 import {
@@ -131,7 +134,7 @@ const AgencyIdPage: React.FC<AgencyIdPageProps> = async ({ params }) => {
                   You need to connect your stripe account to see metrics
                 </CardDescription>
                 <Link
-                  href={`/agency/${agencyDetails.id}/launchpad`}
+                  href={`/agency/${agencyDetails._id}/launchpad`}
                   className="p-2 w-fit bg-secondary text-white rounded-md flex items-center gap-2"
                 >
                   <Clipboard />

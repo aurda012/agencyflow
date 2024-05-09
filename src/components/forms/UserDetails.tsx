@@ -8,12 +8,15 @@ import { toast } from "sonner";
 import { Role, type SubAccount, type User } from "@prisma/client";
 import { v4 as uuidv4 } from "uuid";
 
-import { getAuthUserDetails, updateUser } from "@/queries/auth";
+import {
+  getAuthUserDetails,
+  updateUser,
+} from "@/database/actions/auth.actions";
 import {
   changeUserPermissions,
   getUserWithPermissionsAndSubAccount,
-} from "@/queries/permissions";
-import { saveActivityLogsNotification } from "@/queries/notifications";
+} from "@/database/actions/permission.actions";
+import { saveActivityLogsNotification } from "@/database/actions/notification.actions";
 
 import {
   Card,
@@ -53,12 +56,15 @@ import {
   type UserDataSchema,
   UserDataValidator,
 } from "@/lib/validators/user-data";
+import { ISubAccount } from "@/database/models/subaccount.model";
+import { IPermission } from "@/database/models/permission.model";
+import { IUser } from "@/database/models/user.model";
 
 interface UserDetailsProps {
   id: string | null;
   type: "agency" | "subaccount";
-  userData?: Partial<User>;
-  subAccounts?: SubAccount[];
+  userData?: Partial<IUser>;
+  subAccounts?: ISubAccount[];
 }
 
 const UserDetailsForm: React.FC<UserDetailsProps> = ({
@@ -106,7 +112,7 @@ const UserDetailsForm: React.FC<UserDetailsProps> = ({
     const getPermissions = async () => {
       if (modalData.user) {
         const permissions = await getUserWithPermissionsAndSubAccount(
-          modalData.user.id
+          modalData.user._id
         );
 
         if (permissions) {
@@ -136,19 +142,19 @@ const UserDetailsForm: React.FC<UserDetailsProps> = ({
 
       // check if subaccount have permission and if it have save activity log
       authUserData?.agency?.subAccounts
-        .filter((subAccount) => {
+        .filter((subAccount: Partial<ISubAccount>) => {
           const isSubAccountHavePermission = authUserData.permissions.find(
-            (permission) =>
-              permission.subAccountId === subAccount.id && permission.access
+            (permission: Partial<IPermission>) =>
+              permission.subAccountId === subAccount._id && permission.access
           );
 
           return isSubAccountHavePermission;
         })
-        .forEach(async (subaccount) => {
+        .forEach(async (subaccount: Partial<ISubAccount>) => {
           await saveActivityLogsNotification({
             agencyId: undefined,
             description: `Updated ${userData?.name} information`,
-            subAccountId: subaccount.id,
+            subAccountId: subaccount._id,
           });
         });
 
@@ -181,21 +187,21 @@ const UserDetailsForm: React.FC<UserDetailsProps> = ({
     setIsPermissionLoading(true);
 
     const response = await changeUserPermissions(
-      permissionId ? permissionId : uuidv4(),
       modalData.user?.email,
       subAccountId,
-      access
+      access,
+      permissionId
     );
 
     if (type === "agency") {
       const subAccountWithPermission = subAccountPermissions?.permissions?.find(
-        (permission) => permission.subAccountId === subAccountId
+        (permission: any) => permission.subAccount === subAccountId
       )?.subAccount;
 
       await saveActivityLogsNotification({
-        agencyId: authUserData?.agency?.id,
+        agencyId: authUserData?.agency?._id,
         description: `Gave ${userData?.name} access to | ${subAccountWithPermission?.name}`,
-        subAccountId: subAccountWithPermission?.id,
+        subAccountId: subAccountWithPermission?._id,
       });
     }
 
@@ -205,7 +211,7 @@ const UserDetailsForm: React.FC<UserDetailsProps> = ({
       });
 
       if (subAccountPermissions) {
-        subAccountPermissions.permissions.find((permission) => {
+        subAccountPermissions.permissions.find((permission: IPermission) => {
           if (permission.subAccountId === subAccountId) {
             return { ...permission, access: !permission.access };
           }
@@ -361,13 +367,13 @@ const UserDetailsForm: React.FC<UserDetailsProps> = ({
                   {subAccounts?.map((subAccount) => {
                     const subAccountPermissionsDetails =
                       subAccountPermissions?.permissions.find(
-                        (permission) =>
-                          permission.subAccountId === subAccount.id
+                        (permission: IPermission) =>
+                          permission.subAccount === subAccount._id
                       );
 
                     return (
                       <div
-                        key={subAccount.id}
+                        key={subAccount._id}
                         className="flex items-center justify-between rounded-md border p-4"
                       >
                         <div className="">
@@ -378,9 +384,9 @@ const UserDetailsForm: React.FC<UserDetailsProps> = ({
                           checked={subAccountPermissionsDetails?.access}
                           onCheckedChange={(access) => {
                             onChangePermission(
-                              subAccount.id,
+                              subAccount._id,
                               access,
-                              subAccountPermissionsDetails?.id
+                              subAccountPermissionsDetails?._id
                             );
                           }}
                         />

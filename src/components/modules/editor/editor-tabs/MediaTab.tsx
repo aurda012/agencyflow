@@ -1,8 +1,8 @@
-'use client';
+"use client";
 
 import React from "react";
 
-import { getMedia } from "@/queries/media";
+import { getMedia } from "@/database/actions/media.actions";
 
 import { useModal } from "@/hooks/use-modal";
 import Media from "../../media/Media";

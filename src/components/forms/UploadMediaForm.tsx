@@ -6,8 +6,8 @@ import { SubmitHandler, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "sonner";
 
-import { createMedia } from "@/queries/media";
-import { saveActivityLogsNotification } from "@/queries/notifications";
+import { createMedia } from "@/database/actions/media.actions";
+import { saveActivityLogsNotification } from "@/database/actions/notification.actions";
 
 import { useModal } from "@/hooks/use-modal";
 import {
@@ -58,7 +58,7 @@ const UploadMediaForm: React.FC<UploadMediaFormProps> = ({ subAccountId }) => {
       toast.success("Success", {
         description: "Uploaded media file",
       });
-      
+
       router.refresh();
     } catch (error) {
       toast.error("Failed", {

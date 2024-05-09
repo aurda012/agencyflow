@@ -1,7 +1,10 @@
 import React from "react";
 import { redirect } from "next/navigation";
 
-import { createPipeline, getUserPipelines } from "@/queries/pipelines";
+import {
+  createPipeline,
+  getUserPipelines,
+} from "@/database/actions/pipeline.actions";
 import { constructMetadata } from "@/lib/utils";
 
 interface PipelinesPageProps {
@@ -18,13 +21,13 @@ const PipelinesPage: React.FC<PipelinesPageProps> = async ({ params }) => {
   const pipelineExists = await getUserPipelines(subaccountId);
 
   if (!!pipelineExists.length) {
-    redirect(`/subaccount/${subaccountId}/pipelines/${pipelineExists[0].id}`);
+    redirect(`/subaccount/${subaccountId}/pipelines/${pipelineExists[0]._id}`);
   }
 
   const response = await createPipeline(subaccountId);
 
   if (response) {
-    redirect(`/subaccount/${subaccountId}/pipelines/${response.id}`);
+    redirect(`/subaccount/${subaccountId}/pipelines/${response._id}`);
   }
 
   redirect("/error");

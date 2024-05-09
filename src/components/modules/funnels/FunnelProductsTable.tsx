@@ -6,8 +6,8 @@ import Stripe from "stripe";
 import { useRouter } from "next/navigation";
 import { type Funnel } from "@prisma/client";
 
-import { saveActivityLogsNotification } from "@/queries/notifications";
-import { updateFunnelProducts } from "@/queries/funnels";
+import { saveActivityLogsNotification } from "@/database/actions/notification.actions";
+import { updateFunnelProducts } from "@/database/actions/funnel.actions";
 
 import {
   Table,
@@ -21,9 +21,10 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Button } from "@/components/ui/button";
 import { formatPrice } from "@/lib/utils";
 import { toast } from "sonner";
+import { IFunnel } from "@/database/models/funnel.model";
 
 interface FunnelProductsTableProps {
-  defaultData: Funnel;
+  defaultData: IFunnel;
   products: Stripe.Product[];
 }
 
@@ -42,13 +43,16 @@ const FunnelProductsTable: React.FC<FunnelProductsTableProps> = ({
 
     const response = await updateFunnelProducts(
       JSON.stringify(liveProducts),
-      defaultData.id
+      defaultData._id
     );
 
     await saveActivityLogsNotification({
       agencyId: undefined,
       description: `Update funnel products | ${response.name}`,
-      subAccountId: defaultData.subAccountId,
+      subAccountId:
+        typeof defaultData.subAccount === "string"
+          ? defaultData.subAccount
+          : defaultData.subAccount._id,
     });
 
     toast.success("Success", {

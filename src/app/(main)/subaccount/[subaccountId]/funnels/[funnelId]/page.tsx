@@ -3,7 +3,7 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { ArrowLeft } from "lucide-react";
 
-import { getFunnel } from "@/queries/funnels";
+import { getFunnel } from "@/database/actions/funnel.actions";
 
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import BlurPage from "@/components/common/BlurPage";

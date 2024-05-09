@@ -1,7 +1,7 @@
 import React from "react";
 import { PlusCircle } from "lucide-react";
 
-import { getFunnels } from "@/queries/funnels";
+import { getFunnels } from "@/database/actions/funnel.actions";
 
 import FunnelDetails from "@/components/forms/FunnelDetails";
 import BlurPage from "@/components/common/BlurPage";

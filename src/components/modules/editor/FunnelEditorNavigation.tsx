@@ -17,8 +17,8 @@ import {
 } from "lucide-react";
 import { type FunnelPage } from "@prisma/client";
 
-import { upsertFunnelPage } from "@/queries/funnels";
-import { saveActivityLogsNotification } from "@/queries/notifications";
+import { upsertFunnelPage } from "@/database/actions/funnel.actions";
+import { saveActivityLogsNotification } from "@/database/actions/notification.actions";
 
 import { useEditor } from "@/hooks/use-editor";
 import {
@@ -34,11 +34,12 @@ import { ModeToggle } from "@/components/common/ModeToggle";
 
 import { cn } from "@/lib/utils";
 import { type DeviceTypes } from "@/lib/types/editor";
+import { IFunnelPage } from "@/database/models/funnelpage.model";
 
 interface FunnelEditorNavigationProps {
   funnelId: string;
   subAccountId: string;
-  funnelPageDetails: FunnelPage;
+  funnelPageDetails: IFunnelPage;
 }
 
 const FunnelEditorNavigation: React.FC<FunnelEditorNavigationProps> = ({
@@ -54,7 +55,7 @@ const FunnelEditorNavigation: React.FC<FunnelEditorNavigationProps> = ({
     dispatch({
       type: "SET_FUNNELPAGE_ID",
       payload: {
-        funnelPageId: funnelPageDetails.id,
+        funnelPageId: funnelPageDetails._id,
       },
     });
   }, [funnelPageDetails]);
@@ -66,7 +67,7 @@ const FunnelEditorNavigation: React.FC<FunnelEditorNavigationProps> = ({
 
     if (event.target.value) {
       await upsertFunnelPage(subAccountId, funnelId, {
-        id: funnelPageDetails.id,
+        _id: funnelPageDetails._id,
         name: event.target.value,
         order: funnelPageDetails.order,
       });
@@ -325,7 +326,11 @@ const FunnelEditorNavigation: React.FC<FunnelEditorNavigationProps> = ({
             >
               Save{" "}
               {editor.history.history.length > 1 &&
-                `(${editor.history.history.length <= 50 ? editor.history.history.length : "50+"})`}
+                `(${
+                  editor.history.history.length <= 50
+                    ? editor.history.history.length
+                    : "50+"
+                })`}
             </Button>
           </div>
         </aside>

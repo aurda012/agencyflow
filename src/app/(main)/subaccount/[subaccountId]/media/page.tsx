@@ -1,7 +1,7 @@
 import React from "react";
 import { redirect } from "next/navigation";
 
-import { getMedia } from "@/queries/media";
+import { getMedia } from "@/database/actions/media.actions";
 
 import BlurPage from "@/components/common/BlurPage";
 import Media from "@/components/modules/media/Media";

@@ -3,8 +3,8 @@ import { redirect } from "next/navigation";
 import { currentUser } from "@clerk/nextjs";
 import { Plus } from "lucide-react";
 
-import { getAgencyDetails } from "@/queries/agency";
-import { getAuthUserGroup } from "@/queries/auth";
+import { getAgencyDetails } from "@/database/actions/agency.actions";
+import { getAuthUserGroup } from "@/database/actions/auth.actions";
 
 import TeamsDataTable from "./data-table";
 import { teamTableColumns } from "./columns";

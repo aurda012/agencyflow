@@ -2,7 +2,7 @@
 
 import React from "react";
 
-import { getPipelines } from "@/queries/pipelines";
+import { getPipelines } from "@/database/actions/pipeline.actions";
 
 import {
   Card,
@@ -21,6 +21,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { PipelinesWithLanesAndTickets } from "@/lib/types";
+import { IPipeline } from "@/database/models/pipeline.model";
 
 interface PipelineValueProps {
   subAccountId: string;
@@ -40,7 +41,7 @@ const PipelineValue: React.FC<PipelineValueProps> = ({ subAccountId }) => {
       const res = await getPipelines(subAccountId);
 
       setPipelines(res);
-      setselectedPipelineId(res[0]?.id);
+      setselectedPipelineId(res[0]?._id);
     };
     fetchData();
   }, [subAccountId]);
@@ -49,20 +50,28 @@ const PipelineValue: React.FC<PipelineValueProps> = ({ subAccountId }) => {
     if (pipelines.length) {
       return (
         pipelines
-          .find((pipeline) => pipeline.id === selectedPipelineId)
-          ?.lanes?.reduce((totalLanes, lane, currentLaneIndex, array) => {
-            const laneTicketsTotal = lane.tickets.reduce(
-              (totalTickets, ticket) => totalTickets + Number(ticket?.value),
-              0
-            );
+          .find((pipeline: IPipeline) => pipeline._id === selectedPipelineId)
+          ?.lanes?.reduce(
+            (
+              totalLanes: any,
+              lane: { tickets: any[] },
+              currentLaneIndex: number,
+              array: string | any[]
+            ) => {
+              const laneTicketsTotal = lane.tickets.reduce(
+                (totalTickets, ticket) => totalTickets + Number(ticket?.value),
+                0
+              );
 
-            if (currentLaneIndex === array.length - 1) {
-              setPipelineClosedValue(laneTicketsTotal || 0);
-              return totalLanes;
-            }
+              if (currentLaneIndex === array.length - 1) {
+                setPipelineClosedValue(laneTicketsTotal || 0);
+                return totalLanes;
+              }
 
-            return totalLanes + laneTicketsTotal;
-          }, 0) || 0
+              return totalLanes + laneTicketsTotal;
+            },
+            0
+          ) || 0
       );
     }
     return 0;
@@ -110,8 +119,8 @@ const PipelineValue: React.FC<PipelineValueProps> = ({ subAccountId }) => {
           <SelectContent>
             <SelectGroup>
               <SelectLabel>Pipelines</SelectLabel>
-              {pipelines.map((pipeline) => (
-                <SelectItem value={pipeline.id} key={pipeline.id}>
+              {pipelines.map((pipeline: IPipeline) => (
+                <SelectItem value={pipeline._id} key={pipeline._id}>
                   {pipeline.name}
                 </SelectItem>
               ))}

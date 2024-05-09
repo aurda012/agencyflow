@@ -8,10 +8,10 @@ import { toast } from "sonner";
 import { Check, ChevronsUpDownIcon, User2 } from "lucide-react";
 import type { Contact, Tag, User } from "@prisma/client";
 
-import { getSubAccountTeamMembers } from "@/queries/subaccount";
-import { searchContacts } from "@/queries/contacts";
-import { saveActivityLogsNotification } from "@/queries/notifications";
-import { upsertTicket } from "@/queries/tickets";
+import { getSubAccountTeamMembers } from "@/database/actions/subaccount.actions";
+import { searchContacts } from "@/database/actions/contact.actions";
+import { saveActivityLogsNotification } from "@/database/actions/notification.actions";
+import { upsertTicket } from "@/database/actions/ticket.actions";
 
 import { useModal } from "@/hooks/use-modal";
 import type { TicketsWithTags } from "@/lib/types";
@@ -50,11 +50,16 @@ import {
   TicketDetailsValidator,
 } from "@/lib/validators/ticket-details";
 import { cn } from "@/lib/utils";
+import { sub } from "date-fns";
+import { IUser } from "@/database/models/user.model";
+import { IContact } from "@/database/models/contact.model";
+import { ITag } from "@/database/models/tag.model";
+import { ITicket } from "@/database/models/ticket.model";
 
 interface TicketDetailsProps {
   laneId: string;
   subAccountId: string;
-  getNewTicket: (ticket: TicketsWithTags[0]) => void;
+  getNewTicket: (ticket: ITicket) => void;
 }
 
 const TicketDetails: React.FC<TicketDetailsProps> = ({
@@ -65,13 +70,15 @@ const TicketDetails: React.FC<TicketDetailsProps> = ({
   const router = useRouter();
   const { data: defaultData, setClose } = useModal();
 
-  const [tags, setTags] = React.useState<Tag[]>([]);
-  const [contactList, setContactList] = React.useState<Contact[]>([]);
-  const [allTeamMembers, setAllTeamMembers] = React.useState<User[]>([]);
+  const [tags, setTags] = React.useState<ITag[]>([]);
+  const [contactList, setContactList] = React.useState<IContact[]>([]);
+  const [allTeamMembers, setAllTeamMembers] = React.useState<IUser[]>([]);
   const [contactId, setContactId] = React.useState<string>("");
   const [search, setSearch] = React.useState<string>("");
   const [assignedTo, setAssignedTo] = React.useState<string>(
-    defaultData?.ticket?.assigned?.id || ""
+    typeof defaultData?.ticket?.assigned === "string"
+      ? defaultData?.ticket?.assigned
+      : defaultData?.ticket?.assigned._id
   );
 
   const saveTimerRef = React.useRef<ReturnType<typeof setTimeout>>();
@@ -106,13 +113,20 @@ const TicketDetails: React.FC<TicketDetailsProps> = ({
         value: String(defaultData.ticket.value || 0),
       });
 
-      if (defaultData.ticket.customerId) {
-        setContactId(defaultData.ticket.customerId);
+      if (defaultData.ticket.customer) {
+        setContactId(
+          typeof defaultData.ticket?.customer === "string"
+            ? defaultData.ticket.customer
+            : defaultData.ticket.customer._id
+        );
       }
 
       const fetchContacts = async () => {
         const response = await searchContacts(
-          defaultData.ticket?.customer?.name!
+          typeof defaultData.ticket?.customer === "string"
+            ? defaultData.ticket.customer
+            : "",
+          subAccountId
         );
         setContactList(response);
       };
@@ -127,13 +141,15 @@ const TicketDetails: React.FC<TicketDetailsProps> = ({
     try {
       const response = await upsertTicket(
         {
-          ...values,
-          laneId,
-          id: defaultData.ticket?.id,
-          assignedUserId: assignedTo,
+          value: Number(values.value),
+          name: values.name,
+          description: values.description,
+          lane: laneId,
+          id: defaultData.ticket?._id,
+          assigned: assignedTo,
           ...(contactId
             ? {
-                customerId: contactId,
+                customer: contactId,
               }
             : {}),
         },
@@ -228,7 +244,7 @@ const TicketDetails: React.FC<TicketDetailsProps> = ({
             <TagDetails
               subAccountId={subAccountId}
               getSelectedTags={setTags}
-              defaultTags={defaultData.ticket?.tags || []}
+              defaultTags={(defaultData.ticket?.tags as ITag[]) || []}
             />
             <FormItem>
               <FormLabel>Assign to Team Member</FormLabel>
@@ -254,8 +270,8 @@ const TicketDetails: React.FC<TicketDetailsProps> = ({
                 <SelectContent>
                   {allTeamMembers.map((teamMember) => (
                     <SelectItem
-                      key={teamMember.id}
-                      value={teamMember.id}
+                      key={teamMember._id}
+                      value={teamMember._id}
                       className="cursor-pointer"
                     >
                       <div className="flex items-center gap-2">
@@ -286,7 +302,7 @@ const TicketDetails: React.FC<TicketDetailsProps> = ({
                     className="justify-between"
                   >
                     {contactId
-                      ? contactList.find((c) => c.id === contactId)?.name
+                      ? contactList.find((c) => c._id === contactId)?.name
                       : "Select Customer..."}
                     <ChevronsUpDownIcon className="ml-2 h-4 w-4 shrink-0 opacity-50" />
                   </Button>
@@ -305,7 +321,10 @@ const TicketDetails: React.FC<TicketDetailsProps> = ({
                         }
 
                         saveTimerRef.current = setTimeout(async () => {
-                          const response = await searchContacts(value);
+                          const response = await searchContacts(
+                            value,
+                            subAccountId
+                          );
 
                           setContactList(response);
                           setSearch("");
@@ -323,8 +342,8 @@ const TicketDetails: React.FC<TicketDetailsProps> = ({
                     <CommandGroup>
                       {contactList.map((contact) => (
                         <CommandItem
-                          key={contact.id}
-                          value={contact.id}
+                          key={contact._id}
+                          value={contact._id}
                           onSelect={(currentValue) => {
                             setContactId(
                               currentValue === contactId ? "" : currentValue
@@ -335,7 +354,7 @@ const TicketDetails: React.FC<TicketDetailsProps> = ({
                           <Check
                             className={cn(
                               "ml-auto h-4 w-4",
-                              contactId === contact.id
+                              contactId === contact._id
                                 ? "opacity-100"
                                 : "opacity-0"
                             )}

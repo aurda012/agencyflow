@@ -3,8 +3,8 @@ import { redirect } from "next/navigation";
 import { currentUser } from "@clerk/nextjs";
 import { Role } from "@prisma/client";
 
-import { verifyInvitation } from "@/queries/invitations";
-import { getNotifications } from "@/queries/notifications";
+import { verifyInvitation } from "@/database/actions/invitation.actions";
+import { getNotifications } from "@/database/actions/notification.actions";
 
 import Sidebar from "@/components/modules/sidebar/Sidebar";
 import BlurPage from "@/components/common/BlurPage";
@@ -34,6 +34,7 @@ const AgencyIdLayout: React.FC<AgencyIdLayoutProps> = async ({
   }
 
   const notifications = await getNotifications(verify?.agencyId);
+  console.log(notifications);
 
   return (
     <div className="h-screen overflow-hidden">

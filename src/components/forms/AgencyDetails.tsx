@@ -1,6 +1,7 @@
 "use client";
 
 import React from "react";
+import { Types } from "mongoose";
 
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
@@ -13,9 +14,9 @@ import {
   deleteAgency,
   updateAgencyDetails,
   upsertAgency,
-} from "@/queries/agency";
-import { saveActivityLogsNotification } from "@/queries/notifications";
-import { initUser } from "@/queries/auth";
+} from "@/database/actions/agency.actions";
+import { saveActivityLogsNotification } from "@/database/actions/notification.actions";
+import { initUser } from "@/database/actions/auth.actions";
 
 import { toast } from "sonner";
 import {
@@ -55,9 +56,10 @@ import {
   AgencyDetailsValidator,
   type AgencyDetailsSchema,
 } from "@/lib/validators/agency-details";
+import { IAgency } from "@/database/models/agency.model";
 
 interface AgencyDetailsProps {
-  data?: Partial<Agency>;
+  data?: Partial<IAgency>;
 }
 
 const AgencyDetails = ({ data }: AgencyDetailsProps) => {
@@ -86,7 +88,7 @@ const AgencyDetails = ({ data }: AgencyDetailsProps) => {
     try {
       let customerId: string | undefined;
 
-      if (!data?.id) {
+      if (!data?._id) {
         // create Stripe customer if there is no agency
         const bodyData = {
           email: values.companyEmail,
@@ -124,13 +126,13 @@ const AgencyDetails = ({ data }: AgencyDetailsProps) => {
         customerId = customerData.customerId;
       }
 
-      let agencyId = data?.id ? data.id : uuidv4();
+      let agencyId = data?._id ? data._id : new Types.ObjectId().toString();
 
-      await initUser({ role: Role.AGENCY_OWNER, agencyId });
       if (!data?.customerId && !customerId) return;
+      await initUser({ role: Role.AGENCY_OWNER, agency: agencyId });
 
       const response = await upsertAgency({
-        id: agencyId,
+        _id: agencyId,
         customerId: data?.customerId || customerId || "",
         address: values.address,
         agencyLogo: values.agencyLogo,
@@ -150,7 +152,7 @@ const AgencyDetails = ({ data }: AgencyDetailsProps) => {
 
       toast.success("Created Agency");
 
-      if (data?.id) router.refresh();
+      if (data?._id) router.refresh();
       if (response) router.refresh();
     } catch (error) {
       toast.error("Oppsie!", {
@@ -160,13 +162,13 @@ const AgencyDetails = ({ data }: AgencyDetailsProps) => {
   };
 
   const handleDeleteAgency = async () => {
-    if (!data?.id) return;
+    if (!data?._id) return;
 
     setDeletingAgency(true);
     // TODO: discontinue the subscription for the user
 
     try {
-      const response = await deleteAgency(data.id);
+      const response = await deleteAgency(data._id);
 
       toast.success("Deleted Agency", {
         description: "Deleted your agency and all related subaccounts.",
@@ -186,12 +188,14 @@ const AgencyDetails = ({ data }: AgencyDetailsProps) => {
 
   return (
     <AlertDialog>
-      <Card className={`w-full ${data?.id ? "my-0" : "my-10"}`}>
+      <Card className={`w-full ${data?._id ? "my-0" : "my-10"}`}>
         <CardHeader>
-          <CardTitle>{data?.id ? "Edit Agency" : "Create an Agency"}</CardTitle>
+          <CardTitle>
+            {data?._id ? "Edit Agency" : "Create an Agency"}
+          </CardTitle>
           <CardDescription>
             Lets create an agency for your business. You can edit agency
-            settings latter from the agency settings tab.
+            settings later from the agency settings tab.
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -362,7 +366,7 @@ const AgencyDetails = ({ data }: AgencyDetailsProps) => {
                 )}
               />
 
-              {data?.id && (
+              {data?._id && (
                 <div className="flex flex-col gap-2">
                   <FormLabel>Create A Goal</FormLabel>
                   <FormDescription>
@@ -375,11 +379,11 @@ const AgencyDetails = ({ data }: AgencyDetailsProps) => {
                     className="!bg-background !border !border-input rounded-md text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
                     placeholder="Sub Account Goal"
                     onValueChange={async (value) => {
-                      if (!data.id) {
+                      if (!data._id) {
                         return;
                       }
 
-                      await updateAgencyDetails(data?.id, { goal: value });
+                      await updateAgencyDetails(data?._id, { goal: value });
                       await saveActivityLogsNotification({
                         description: `Updated the agency goal to | ${value} Sub Account`,
                       });
@@ -402,7 +406,7 @@ const AgencyDetails = ({ data }: AgencyDetailsProps) => {
           </Form>
         </CardContent>
       </Card>
-      {data?.id && (
+      {data?._id && (
         <Card className="border border-destructive">
           <CardHeader>
             <CardTitle className="text-destructive">Danger Zone</CardTitle>

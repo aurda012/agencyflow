@@ -4,7 +4,7 @@ import { currentUser } from "@clerk/nextjs";
 import { redirect } from "next/navigation";
 import { type Plan } from "@prisma/client";
 
-import { verifyInvitation } from "@/queries/invitations";
+import { verifyInvitation } from "@/database/actions/invitation.actions";
 
 import AgencyDetails from "@/components/forms/AgencyDetails";
 import Unauthorized from "@/components/common/Unauthorized";

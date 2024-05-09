@@ -8,7 +8,7 @@ import { Role } from "@prisma/client";
 import { toast } from "sonner";
 import { Copy, Edit, MoreHorizontal, Trash } from "lucide-react";
 
-import { deleteUser, getAuthUser } from "@/queries/auth";
+import { deleteUser, getAuthUser } from "@/database/actions/auth.actions";
 
 import { useModal } from "@/hooks/use-modal";
 import { Badge } from "@/components/ui/badge";
@@ -41,7 +41,7 @@ import { type UsersWithAgencySubAccountPermissions } from "@/lib/types";
 export const teamTableColumns: ColumnDef<UsersWithAgencySubAccountPermissions>[] =
   [
     {
-      accessorKey: "id",
+      accessorKey: "_id",
       header: "",
       cell: () => {
         return null;
@@ -82,7 +82,7 @@ export const teamTableColumns: ColumnDef<UsersWithAgencySubAccountPermissions>[]
       cell: ({ row }) => {
         const isAgencyOwner = row.getValue("role") === Role.AGENCY_OWNER;
         const ownedAccounts = row.original?.permissions.filter(
-          (per) => per.access
+          (per: any) => per.access
         );
 
         if (isAgencyOwner)
@@ -100,9 +100,9 @@ export const teamTableColumns: ColumnDef<UsersWithAgencySubAccountPermissions>[]
           <div className="flex flex-col items-start">
             <div className="flex flex-col gap-2">
               {ownedAccounts?.length ? (
-                ownedAccounts.map((account) => (
+                ownedAccounts.map((account: any) => (
                   <Badge
-                    key={account.id}
+                    key={account._id}
                     className="bg-slate-600 w-fit whitespace-nowrap"
                   >
                     Sub Account - {account.subAccount.name}
@@ -185,7 +185,7 @@ const CellActions: React.FC<CellActionsProps> = ({ rowData }) => {
                 >
                   <UserDetails
                     type="agency"
-                    id={rowData?.agency?.id || null}
+                    id={rowData?.agency?._id || null}
                     subAccounts={rowData?.agency?.subAccounts}
                   />
                 </CustomModal>,
@@ -224,7 +224,7 @@ const CellActions: React.FC<CellActionsProps> = ({ rowData }) => {
             className="bg-destructive hover:bg-destructive"
             onClick={async () => {
               setIsLoading(true);
-              await deleteUser(rowData.id);
+              await deleteUser(rowData._id);
               toast.success("Deleted User", {
                 description: "The user has been deleted from this agency.",
               });

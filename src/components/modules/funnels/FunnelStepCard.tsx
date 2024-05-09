@@ -9,9 +9,10 @@ import { type FunnelPage } from "@prisma/client";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
+import { IFunnelPage } from "@/database/models/funnelpage.model";
 
 interface FunnelStepCardProps {
-  funnelPage: FunnelPage;
+  funnelPage: IFunnelPage;
   index: number;
   activePage: boolean;
   totalPages: number;
@@ -26,7 +27,7 @@ const FunnelStepCard: React.FC<FunnelStepCardProps> = ({
   let portal = document.getElementById("blur-page");
 
   return (
-    <Draggable draggableId={funnelPage.id.toString()} index={index}>
+    <Draggable draggableId={funnelPage._id.toString()} index={index}>
       {(provided, snapshot) => {
         if (snapshot.isDragging) {
           const offset = { x: 300 };

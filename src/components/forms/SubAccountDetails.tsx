@@ -8,8 +8,8 @@ import { toast } from "sonner";
 import { type Agency, type SubAccount } from "@prisma/client";
 import { v4 as uuidv4 } from "uuid";
 
-import { saveActivityLogsNotification } from "@/queries/notifications";
-import { upsertSubAccount } from "@/queries/subaccount";
+import { saveActivityLogsNotification } from "@/database/actions/notification.actions";
+import { upsertSubAccount } from "@/database/actions/subaccount.actions";
 
 import { useModal } from "@/hooks/use-modal";
 import {
@@ -35,7 +35,10 @@ import {
   type SubAccountDetailsSchema,
   SubAccountDetailsValidator,
 } from "@/lib/validators/subaccount-details";
-import { sendInvitation } from "@/queries/invitations";
+import { sendInvitation } from "@/database/actions/invitation.actions";
+import { IAgency } from "@/database/models/agency.model";
+import { ISubAccount } from "@/database/models/subaccount.model";
+import { Types } from "mongoose";
 
 // CHALLENGE Give access for Subaccount Guest they should see a different view maybe a form that allows them to create tickets
 
@@ -44,8 +47,8 @@ import { sendInvitation } from "@/queries/invitations";
 
 interface SubAccountDetailsProps {
   //To add the sub account to the agency
-  agencyDetails: Agency;
-  details?: Partial<SubAccount>;
+  agencyDetails: IAgency;
+  details?: Partial<ISubAccount>;
   userId: string;
   userName: string;
 }
@@ -67,13 +70,15 @@ const SubAccountDetails: React.FC<SubAccountDetailsProps> = ({
 
   async function onSubmit(values: SubAccountDetailsSchema) {
     try {
-      const subAccountId = details?.id ? details.id : uuidv4();
+      const subAccountId = details?._id
+        ? details._id
+        : new Types.ObjectId().toString();
       const response = await upsertSubAccount(
         {
-          id: subAccountId,
+          _id: subAccountId,
           createdAt: new Date(),
           updatedAt: new Date(),
-          agencyId: agencyDetails.id,
+          agency: agencyDetails._id,
           connectAccountId: "",
           goal: 5000,
           ...values,
@@ -89,7 +94,7 @@ const SubAccountDetails: React.FC<SubAccountDetailsProps> = ({
           values.name,
           "SUBACCOUNT_USER",
           values.companyEmail,
-          agencyDetails.id,
+          agencyDetails._id,
           subAccountId
         );
       }
@@ -99,7 +104,7 @@ const SubAccountDetails: React.FC<SubAccountDetailsProps> = ({
         description: `${details ? "Updated" : "Created"} Sub Account | ${
           response.name
         }`,
-        subAccountId: response.id,
+        subAccountId: response._id,
       });
 
       toast.success("Subaccount details saved", {

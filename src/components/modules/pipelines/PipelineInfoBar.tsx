@@ -21,11 +21,12 @@ import {
 import { cn } from "@/lib/utils";
 import CustomModal from "@/components/common/CustomModal";
 import CreatePipelineForm from "@/components/forms/PipelineDetails";
+import { IPipeline } from "@/database/models/pipeline.model";
 
 interface PipelineInfoBarProps {
   pipelineId: string;
   subAccountId: string;
-  pipelines: Pipeline[];
+  pipelines: IPipeline[];
 }
 
 const PipelineInfoBar: React.FC<PipelineInfoBarProps> = ({
@@ -64,7 +65,7 @@ const PipelineInfoBar: React.FC<PipelineInfoBarProps> = ({
               className="sm:w-48 w-full justify-between flex items-center gap-2"
             >
               {value
-                ? pipelines.find((pipeline) => pipeline.id === value)?.name
+                ? pipelines.find((pipeline) => pipeline._id === value)?.name
                 : "Select a pipeline"}
               <ChevronsUpDown className="w-4 h-4 shrink-0 opacity-50" />
             </Button>
@@ -76,16 +77,16 @@ const PipelineInfoBar: React.FC<PipelineInfoBarProps> = ({
                 {pipelines.map((pipeline) => {
                   return (
                     <Link
-                      key={pipeline.id}
-                      href={`/subaccount/${subAccountId}/pipelines/${pipeline.id}`}
+                      key={pipeline._id}
+                      href={`/subaccount/${subAccountId}/pipelines/${pipeline._id}`}
                       className={cn(
                         buttonVariants({
-                          variant: value === pipeline.id ? "default" : "ghost",
+                          variant: value === pipeline._id ? "default" : "ghost",
                           size: "sm",
                         }),
                         {
                           "bg-primary text-white font-bold":
-                            value === pipeline.id,
+                            value === pipeline._id,
                         },
                         "w-full gap-2 justify-start"
                       )}

@@ -6,28 +6,31 @@ import { db } from "@/lib/db";
 import { Plan, Prisma } from "@prisma/client";
 import { logger } from "@/lib/utils";
 import { ADD_ONS } from "@/config/add-ons";
+import { connectToDatabase } from "@/database";
+import Agency from "@/database/models/agency.model";
+import SubAccount from "@/database/models/subaccount.model";
+import Subscription, {
+  ISubscription,
+} from "@/database/models/subscription.model";
 
 export const subscriptionCreate = async (
   subscription: Stripe.Subscription,
   customerId: string
 ) => {
   try {
-    const agency = await db.agency.findFirst({
-      where: {
-        customerId,
-      },
-      include: {
-        subAccounts: true,
-      },
-    });
+    await connectToDatabase();
+
+    const agency = await Agency.findOne({
+      customerId,
+    }).populate({ path: "subAccounts", model: SubAccount });
 
     if (!agency) {
       throw new Error("Could not find an agency to upsert the subscription");
     }
 
-    const data: Prisma.SubscriptionUncheckedCreateInput = {
+    const data: Partial<ISubscription> = {
       active: subscription.status === "active",
-      agencyId: agency.id,
+      agency: agency._id,
       customerId,
       currentPeriodEndDate: new Date(subscription.current_period_end * 1000),
       // @ts-ignore
@@ -37,15 +40,13 @@ export const subscriptionCreate = async (
       plan: subscription.plan.id as Plan,
     };
 
-    const response = await db.subscription.upsert({
-      where: {
-        agencyId: agency.id,
-      },
-      create: data,
-      update: data,
-    });
+    const response = await Subscription.findOneAndUpdate(
+      { agency: agency._id },
+      { $set: { ...data } },
+      { new: true, upsert: true }
+    );
 
-    return response;
+    return JSON.parse(JSON.stringify(response));
   } catch (error) {
     logger(error);
   }

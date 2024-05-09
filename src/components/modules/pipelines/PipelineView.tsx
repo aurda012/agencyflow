@@ -4,7 +4,6 @@ import React from "react";
 import { useRouter } from "next/navigation";
 import { DragDropContext, DropResult, Droppable } from "react-beautiful-dnd";
 import { Flag, Plus } from "lucide-react";
-import { type Lane, type Ticket } from "@prisma/client";
 
 import { useModal } from "@/hooks/use-modal";
 import { Button } from "@/components/ui/button";
@@ -17,14 +16,16 @@ import type {
   PipelineDetailsWithLanesCardsTagsTickets,
   TicketAndTags,
 } from "@/lib/types";
+import { ILane } from "@/database/models/lane.model";
+import { ITicket } from "@/database/models/ticket.model";
 
 interface PipelineViewProps {
-  lanes: LaneDetailsType[];
+  lanes: ILane[];
   pipelineId: string;
   subAccountId: string;
   pipelineDetails: PipelineDetailsWithLanesCardsTagsTickets;
-  updateLanesOrder: (lanes: Lane[]) => Promise<void>;
-  updateTicketsOrder: (tickets: Ticket[]) => Promise<void>;
+  updateLanesOrder: (lanes: ILane[]) => Promise<void>;
+  updateTicketsOrder: (tickets: ITicket[]) => Promise<void>;
 }
 
 const PipelineView: React.FC<PipelineViewProps> = ({
@@ -38,16 +39,12 @@ const PipelineView: React.FC<PipelineViewProps> = ({
   const router = useRouter();
   const { setOpen } = useModal();
 
-  const [allLanes, setAllLanes] = React.useState<LaneDetailsType[]>(lanes);
+  const [allLanes, setAllLanes] = React.useState<ILane[]>(lanes);
   const [allTickets, setAllTickets] = React.useState<TicketAndTags[]>([]);
 
   React.useEffect(() => {
     setAllLanes(lanes);
   }, [lanes]);
-
-  const ticketsFromAllLanes: TicketAndTags[] = lanes.flatMap(
-    (lane) => lane.tickets,
-  );
 
   const handleAddLane = () => {
     setOpen(
@@ -57,7 +54,7 @@ const PipelineView: React.FC<PipelineViewProps> = ({
         scrollShadow={false}
       >
         <LaneDetails pipelineId={pipelineId}></LaneDetails>
-      </CustomModal>,
+      </CustomModal>
     );
   };
 
@@ -84,8 +81,8 @@ const PipelineView: React.FC<PipelineViewProps> = ({
             order: index,
           }));
 
-        setAllLanes(newLanes);
-        updateLanesOrder(newLanes);
+        setAllLanes(newLanes as ILane[]);
+        updateLanesOrder(newLanes as ILane[]);
 
         router.refresh();
       }
@@ -93,10 +90,10 @@ const PipelineView: React.FC<PipelineViewProps> = ({
         const lanesCopyArray = [...allLanes];
 
         const originLane = lanesCopyArray.find(
-          (lane) => lane.id === source.droppableId,
+          (lane) => lane._id === source.droppableId
         );
         const destinationLane = lanesCopyArray.find(
-          (lane) => lane.id === destination.droppableId,
+          (lane) => lane._id === destination.droppableId
         );
 
         if (!originLane || !destinationLane) return null;
@@ -174,7 +171,7 @@ const PipelineView: React.FC<PipelineViewProps> = ({
               <div className="flex items-start gap-3 mt-4">
                 {allLanes.map((lane, index) => (
                   <PipelineLane
-                    key={lane.id}
+                    key={lane._id}
                     allTickets={allTickets}
                     setAllTickets={setAllTickets}
                     subAccountId={subAccountId}

@@ -59,7 +59,7 @@ const customTooltip = ({
       </div>
       {categoryPayload.payload.FunnelPages?.map((page: any) => (
         <div
-          key={page.id}
+          key={page._id}
           className="dark:text-white/70 text-black flex justify-between items-center"
         >
           <small>{page.name}</small>

@@ -1,11 +1,17 @@
 import { Stripe } from "stripe";
-import { getAuthUserDetails } from "@/queries/auth";
-import { getSubAccountWithContacts } from "@/queries/contacts";
-import { getMedia } from "@/queries/media";
-import { getUserWithPermissionsAndSubAccount } from "@/queries/permissions";
-import { getPipelineDetails, getPipelines } from "@/queries/pipelines";
-import { getTicketDetails, getTicketsWithTags } from "@/queries/tickets";
-import { getFunnels } from "@/queries/funnels";
+import { getAuthUserDetails } from "@/database/actions/auth.actions";
+import { getSubAccountWithContacts } from "@/database/actions/contact.actions";
+import { getMedia } from "@/database/actions/media.actions";
+import { getUserWithPermissionsAndSubAccount } from "@/database/actions/permission.actions";
+import {
+  getPipelineDetails,
+  getPipelines,
+} from "@/database/actions/pipeline.actions";
+import {
+  getTicketDetails,
+  getTicketsWithTags,
+} from "@/database/actions/ticket.actions";
+import { getFunnels } from "@/database/actions/funnel.actions";
 
 import type {
   Contact,
@@ -16,9 +22,13 @@ import type {
   Ticket,
   User,
 } from "@prisma/client";
+import { IUser } from "@/database/models/user.model";
+import { INotification } from "@/database/models/notification.model";
+import { ITag } from "@/database/models/tag.model";
+import { IContact } from "@/database/models/contact.model";
 
 export type NotificationsWithUser =
-  | ({ user: User } & Notification)[]
+  | ({ user: IUser } & INotification)[]
   | undefined;
 
 export type UserWithPermissionsAndSubAccounts = Prisma.PromiseReturnType<
@@ -38,9 +48,9 @@ export type MediaFiles = Prisma.PromiseReturnType<typeof getMedia>;
 export type CreateMediaType = Prisma.MediaCreateWithoutSubAccountInput;
 
 export type TicketAndTags = Ticket & {
-  tags: Tag[];
-  assigned: User | null;
-  customer: Contact | null;
+  tags: ITag[];
+  assigned: IUser | null;
+  customer: IContact | null;
 };
 
 export type LaneDetails = Lane & {

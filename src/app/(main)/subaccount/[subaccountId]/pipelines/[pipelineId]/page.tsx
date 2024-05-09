@@ -1,12 +1,15 @@
 import React from "react";
 import { redirect } from "next/navigation";
 
-import { getPipelineDetails, getUserPipelines } from "@/queries/pipelines";
+import {
+  getPipelineDetails,
+  getUserPipelines,
+} from "@/database/actions/pipeline.actions";
 import {
   getLanesWithTicketsAndTags,
   updateLanesOrder,
   updateTicketsOrder,
-} from "@/queries/lanes";
+} from "@/database/actions/lane.actions";
 
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import PipelineInfoBar from "@/components/modules/pipelines/PipelineInfoBar";

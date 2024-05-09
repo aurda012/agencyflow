@@ -12,8 +12,8 @@ import {
 import { format } from "date-fns";
 import { toast } from "sonner";
 
-import { deleteTicket } from "@/queries/tickets";
-import { saveActivityLogsNotification } from "@/queries/notifications";
+import { deleteTicket } from "@/database/actions/ticket.actions";
+import { saveActivityLogsNotification } from "@/database/actions/notification.actions";
 
 import { useModal } from "@/hooks/use-modal";
 import {
@@ -54,11 +54,15 @@ import TicketDetails from "@/components/forms/TicketDetails";
 
 import type { TicketsWithTags } from "@/lib/types";
 import { formatPrice } from "@/lib/utils";
+import { ITicket } from "@/database/models/ticket.model";
+import { ITag } from "@/database/models/tag.model";
+import { IContact } from "@/database/models/contact.model";
+import { IUser } from "@/database/models/user.model";
 
 interface PipelineTicketProps {
   setAllTickets: React.Dispatch<React.SetStateAction<TicketsWithTags>>;
   allTickets: TicketsWithTags;
-  ticket: TicketsWithTags[0];
+  ticket: ITicket;
   subAccountId: string;
   index: number;
 }
@@ -73,10 +77,13 @@ const PipelineTicket: React.FC<PipelineTicketProps> = ({
   const router = useRouter();
   const { setOpen } = useModal();
 
-  const editNewTicket = (ticket: TicketsWithTags[0]) => {
+  const customer = ticket.customer as IContact;
+  const assigned = ticket.assigned as IUser;
+
+  const editNewTicket = (ticket: ITicket) => {
     setAllTickets(() => {
-      return allTickets.map((t) => {
-        if (t.id === ticket.id) {
+      return allTickets.map((t: ITicket) => {
+        if (t._id === ticket._id) {
           return ticket;
         }
 
@@ -90,7 +97,9 @@ const PipelineTicket: React.FC<PipelineTicketProps> = ({
       <CustomModal title="Update Ticket Details">
         <TicketDetails
           getNewTicket={editNewTicket}
-          laneId={ticket.laneId}
+          laneId={
+            typeof ticket.lane === "string" ? ticket.lane : ticket.lane._id
+          }
           subAccountId={subAccountId}
         />
       </CustomModal>,
@@ -103,9 +112,11 @@ const PipelineTicket: React.FC<PipelineTicketProps> = ({
 
   const handleDeleteTicket = async () => {
     try {
-      setAllTickets((tickets) => tickets.filter((t) => t.id !== ticket.id));
+      setAllTickets((tickets: ITicket[]) =>
+        tickets.filter((t) => t._id !== ticket._id)
+      );
 
-      const response = await deleteTicket(ticket.id);
+      const response = await deleteTicket(ticket._id);
       await saveActivityLogsNotification({
         agencyId: undefined,
         description: `Deleted a ticket | ${response?.name}`,
@@ -115,7 +126,7 @@ const PipelineTicket: React.FC<PipelineTicketProps> = ({
       toast.success("Deleted", {
         description: "Deleted ticket from lane.",
       });
-      
+
       router.refresh();
     } catch (error) {
       toast.error("Oppse!", {
@@ -125,20 +136,20 @@ const PipelineTicket: React.FC<PipelineTicketProps> = ({
   };
 
   return (
-    <Draggable draggableId={ticket.id.toString()} index={index}>
+    <Draggable draggableId={ticket._id.toString()} index={index}>
       {(provided, snapshot) => {
         if (snapshot.isDragging) {
-          const offset = { x: 300, y: 20 }
+          const offset = { x: 300, y: 20 };
           //@ts-ignore
-          const x = provided.draggableProps.style?.left - offset.x
+          const x = provided.draggableProps.style?.left - offset.x;
           //@ts-ignore
-          const y = provided.draggableProps.style?.top - offset.y
+          const y = provided.draggableProps.style?.top - offset.y;
           //@ts-ignore
           provided.draggableProps.style = {
             ...provided.draggableProps.style,
             top: y,
             left: x,
-          }
+          };
         }
 
         return (
@@ -161,13 +172,16 @@ const PipelineTicket: React.FC<PipelineTicketProps> = ({
                       {format(new Date(ticket.createdAt), "dd/MM/yyyy hh:mm")}
                     </span>
                     <div className="flex items-center flex-wrap gap-2">
-                      {ticket.tags.map((tag) => (
-                        <Tag
-                          key={tag.id}
-                          title={tag.name}
-                          colorName={tag.color}
-                        />
-                      ))}
+                      {ticket.tags.map((tag) => {
+                        const tagData = tag as ITag;
+                        return (
+                          <Tag
+                            key={tagData._id}
+                            title={tagData.name}
+                            colorName={tagData.color}
+                          />
+                        );
+                      })}
                     </div>
                     <CardDescription className="w-full">
                       {ticket.description}
@@ -184,21 +198,21 @@ const PipelineTicket: React.FC<PipelineTicketProps> = ({
                           <Avatar>
                             <AvatarImage />
                             <AvatarFallback className="bg-primary">
-                              {ticket.customer?.name.slice(0, 2).toUpperCase()}
+                              {customer?.name.slice(0, 2).toUpperCase()}
                             </AvatarFallback>
                           </Avatar>
                           <div className="space-y-1">
                             <h4 className="text-sm font-semibold">
-                              {ticket.customer?.name}
+                              {customer?.name}
                             </h4>
                             <p className="text-sm text-muted-foreground">
-                              {ticket.customer?.email}
+                              {customer?.email}
                             </p>
                             <div className="flex items-center pt-2">
                               <Contact2 className="mr-2 h-4 w-4 opacity-70" />
                               <span className="text-xs text-muted-foreground">
                                 Joined{" "}
-                                {ticket.customer?.createdAt.toLocaleDateString()}
+                                {customer?.createdAt.toLocaleDateString()}
                               </span>
                             </div>
                           </div>
@@ -210,26 +224,22 @@ const PipelineTicket: React.FC<PipelineTicketProps> = ({
                   <CardFooter className="m-0 p-2 border-t border-muted-foreground/20 flex items-center justify-between">
                     <div className="flex items-center gap-2">
                       <Avatar className="w-7 h-7">
-                        <AvatarImage
-                          alt="contact"
-                          src={ticket.assigned?.avatarUrl}
-                        />
+                        <AvatarImage alt="contact" src={assigned?.avatarUrl} />
                         <AvatarFallback className="bg-primary text-sm text-white">
-                          {ticket.assigned?.name}
-                          {!ticket.assignedUserId && <User2 className="w-4 h-4" />}
+                          {assigned?.name}
+                          {!ticket.assigned && <User2 className="w-4 h-4" />}
                         </AvatarFallback>
                       </Avatar>
                       <div className="flex flex-col text-xs justify-center">
                         <span className="text-muted-foreground">
-                          {ticket.assignedUserId
-                            ? "Assigned to:"
-                            : "Not Assigned"}
+                          {ticket.assigned ? "Assigned to:" : "Not Assigned"}
                         </span>
-                        {ticket.assignedUserId && (
+                        {ticket.assigned && (
                           <span className="text-xs w-28 overflow-ellipsis overflow-hidden whitespace-nowrap text-muted-foreground">
-                            {ticket.assigned?.name}
+                            {assigned?.name}
                           </span>
                         )}
+                        x
                       </div>
                     </div>
                     {!!ticket.value && (

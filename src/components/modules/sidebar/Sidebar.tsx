@@ -1,6 +1,6 @@
 import React from "react";
 
-import { getAuthUserDetails } from "@/queries/auth";
+import { getAuthUserDetails } from "@/database/actions/auth.actions";
 
 import MenuOptions from "./MenuOptions";
 import {
@@ -11,6 +11,8 @@ import {
   SubAccountSidebarOption,
   subAccountSidebarOptions,
 } from "@/config/subaccount-sidebar";
+import { ISubAccount } from "@/database/models/subaccount.model";
+import { IPermission } from "@/database/models/permission.model";
 
 interface SidebarProps {
   id: string;
@@ -25,7 +27,9 @@ const Sidebar: React.FC<SidebarProps> = async ({ id, type }) => {
   const details =
     type === "agency"
       ? user.agency
-      : user?.agency.subAccounts.find((subAccount) => subAccount.id === id);
+      : user?.agency.subAccounts.find(
+          (subAccount: Partial<ISubAccount>) => subAccount._id === id
+        );
   const isWhiteLabelAgency = user.agency.whiteLabel;
 
   if (!details) return null;
@@ -34,7 +38,7 @@ const Sidebar: React.FC<SidebarProps> = async ({ id, type }) => {
 
   if (!isWhiteLabelAgency && type === "subaccount") {
     const subAccountLogo = user?.agency.subAccounts.find(
-      (subAccount) => subAccount.id === id
+      (subAccount: Partial<ISubAccount>) => subAccount._id === id
     )?.subAccountLogo;
 
     sideBarLogo = subAccountLogo || user.agency.agencyLogo;
@@ -48,11 +52,12 @@ const Sidebar: React.FC<SidebarProps> = async ({ id, type }) => {
     sidebarOptions = subAccountSidebarOptions(id);
   }
 
-  const subAccounts = user.agency.subAccounts.filter((subAccount) =>
-    user.permissions.find(
-      (permission) =>
-        permission.subAccountId === subAccount.id && permission.access === true
-    )
+  const subAccounts = user.agency.subAccounts.filter(
+    (subAccount: Partial<ISubAccount>) =>
+      user.permissions.find(
+        (permission: Partial<IPermission>) =>
+          permission.subAccount === subAccount._id && permission.access === true
+      )
   );
 
   return (

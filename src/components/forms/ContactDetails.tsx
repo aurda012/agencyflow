@@ -6,8 +6,8 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { toast } from "sonner";
 
-import { saveActivityLogsNotification } from "@/queries/notifications";
-import { upsertContact } from "@/queries/contacts";
+import { saveActivityLogsNotification } from "@/database/actions/notification.actions";
+import { upsertContact } from "@/database/actions/contact.actions";
 
 import { useModal } from "@/hooks/use-modal";
 import {
@@ -61,7 +61,7 @@ const ContactDetails: React.FC<ContactDetailsProps> = ({ subAccountId }) => {
       const response = await upsertContact({
         email: values.email,
         name: values.name,
-        subAccountId,
+        subAccount: subAccountId,
       });
 
       await saveActivityLogsNotification({

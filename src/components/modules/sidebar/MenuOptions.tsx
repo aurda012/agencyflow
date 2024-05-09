@@ -46,18 +46,22 @@ import { Separator } from "@/components/ui/separator";
 import { icons } from "@/components/ui/icons";
 import { AgencySidebarOption } from "@/config/agency-sidebar";
 import { SubAccountSidebarOption } from "@/config/subaccount-sidebar";
+import { ISubAccount } from "@/database/models/subaccount.model";
+import { IAgency } from "@/database/models/agency.model";
+import { IPermission } from "@/database/models/permission.model";
+import { IUser } from "@/database/models/user.model";
 
 interface MenuOptionsProps {
   id: string;
   defaultOpen?: boolean;
   sideBarLogo: string;
-  subAccount: SubAccount[];
+  subAccount: ISubAccount[];
   sideBarOptions: AgencySidebarOption[] | SubAccountSidebarOption[];
-  details: Agency | SubAccount;
+  details: IAgency | ISubAccount;
   user: {
-    agency: Agency | null;
-    permissions: Permissions[];
-  } & User;
+    agency: IAgency | null;
+    permissions: IPermission[];
+  } & IUser;
 }
 
 const MenuOptions: React.FC<MenuOptionsProps> = ({
@@ -153,7 +157,7 @@ const MenuOptions: React.FC<MenuOptionsProps> = ({
                         <CommandItem className="bg-transparent my-2 text-primary border border-border p-2 rounded-md hover:bg-muted transition-all">
                           {defaultOpen ? (
                             <Link
-                              href={`/agency/${user.agency.id}`}
+                              href={`/agency/${user.agency._id}`}
                               className="flex gap-4 w-full h-full"
                             >
                               <div className="relative w-10">
@@ -174,7 +178,7 @@ const MenuOptions: React.FC<MenuOptionsProps> = ({
                           ) : (
                             <SheetClose asChild>
                               <Link
-                                href={`/agency/${user.agency.id}`}
+                                href={`/agency/${user.agency._id}`}
                                 className="flex gap-4 w-full h-full"
                               >
                                 <div className="relative w-10">
@@ -200,10 +204,10 @@ const MenuOptions: React.FC<MenuOptionsProps> = ({
                     <CommandGroup heading="Accounts">
                       {!!subAccount.length ? (
                         subAccount.map((sub) => (
-                          <CommandItem key={sub.id}>
+                          <CommandItem key={sub._id}>
                             {defaultOpen ? (
                               <Link
-                                href={`/subaccount/${sub.id}`}
+                                href={`/subaccount/${sub._id}`}
                                 className="flex gap-4 w-full h-full"
                               >
                                 <div className="relative w-10">
@@ -224,7 +228,7 @@ const MenuOptions: React.FC<MenuOptionsProps> = ({
                             ) : (
                               <SheetClose asChild>
                                 <Link
-                                  href={`/subaccount/${sub.id}`}
+                                  href={`/subaccount/${sub._id}`}
                                   className="flex gap-4 w-full h-full"
                                 >
                                   <div className="relative w-10">
@@ -265,7 +269,7 @@ const MenuOptions: React.FC<MenuOptionsProps> = ({
                           >
                             <SubAccountDetails
                               agencyDetails={user.agency!}
-                              userId={user.id}
+                              userId={user._id}
                               userName={user.name}
                             />
                           </CustomModal>

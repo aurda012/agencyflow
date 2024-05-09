@@ -7,8 +7,8 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "sonner";
 import { Role, SubAccount } from "@prisma/client";
 
-import { saveActivityLogsNotification } from "@/queries/notifications";
-import { sendInvitation } from "@/queries/invitations";
+import { saveActivityLogsNotification } from "@/database/actions/notification.actions";
+import { sendInvitation } from "@/database/actions/invitation.actions";
 
 import {
   Card,
@@ -40,10 +40,11 @@ import {
   type SendInvitationSchema,
 } from "@/lib/validators/send-invitation";
 import { useModal } from "@/hooks/use-modal";
+import { ISubAccount } from "@/database/models/subaccount.model";
 
 interface SendInvitationProps {
   agencyId: string;
-  subAccounts: SubAccount[];
+  subAccounts: ISubAccount[];
 }
 
 const SendInvitation: React.FC<SendInvitationProps> = ({
@@ -190,7 +191,10 @@ const SendInvitation: React.FC<SendInvitationProps> = ({
                       </FormControl>
                       <SelectContent>
                         {subAccounts.map((subAccount) => (
-                          <SelectItem key={subAccount.id} value={subAccount.id}>
+                          <SelectItem
+                            key={subAccount._id}
+                            value={subAccount._id}
+                          >
                             {subAccount.name}
                           </SelectItem>
                         ))}

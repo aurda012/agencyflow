@@ -88,9 +88,12 @@ const InfoBar: React.FC<InfoBarProps> = ({
                 </SheetDescription>
               </SheetHeader>
               {!!allNotifications?.length && (
-                <div ref={animatedListRef} className="flex flex-col gap-4 overflow-y-auto scrollbar scrollbar-thumb-muted-foreground/20 scrollbar-thumb-rounded-full scrollbar-track-rounded-full scrollbar-medium">
+                <div
+                  ref={animatedListRef}
+                  className="flex flex-col gap-4 overflow-y-auto scrollbar scrollbar-thumb-muted-foreground/20 scrollbar-thumb-rounded-full scrollbar-track-rounded-full scrollbar-medium"
+                >
                   {allNotifications?.map((notification) => (
-                    <Card key={notification.id}>
+                    <Card key={notification._id}>
                       <CardContent className="flex gap-4 p-4">
                         <Avatar>
                           <AvatarImage

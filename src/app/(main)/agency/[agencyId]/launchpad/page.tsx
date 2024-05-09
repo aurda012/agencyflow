@@ -4,7 +4,10 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { CheckCircle2 } from "lucide-react";
 
-import { getAgencyDetails, updateAgencyConnectedId } from "@/queries/agency";
+import {
+  getAgencyDetails,
+  updateAgencyConnectedId,
+} from "@/database/actions/agency.actions";
 
 import { Button, buttonVariants } from "@/components/ui/button";
 import {
@@ -18,7 +21,7 @@ import {
 import { constructMetadata, getStripeOAuthLink, logger } from "@/lib/utils";
 import { stripe } from "@/lib/stripe";
 
-interface LaunchPagPageageProps {
+interface LaunchPageProps {
   params: {
     agencyId: string | undefined;
   };
@@ -27,7 +30,7 @@ interface LaunchPagPageageProps {
   };
 }
 
-const LaunchPagPageage: React.FC<LaunchPagPageageProps> = async ({
+const LaunchPage: React.FC<LaunchPageProps> = async ({
   params,
   searchParams,
 }) => {
@@ -54,7 +57,7 @@ const LaunchPagPageage: React.FC<LaunchPagPageageProps> = async ({
 
   const stripeOAuthLink = getStripeOAuthLink(
     "agency",
-    `launchpad___${agencyDetails.id}`
+    `launchpad___${agencyDetails._id}`
   );
   let connectedStripeAccount: boolean = false;
 
@@ -161,7 +164,7 @@ const LaunchPagPageage: React.FC<LaunchPagPageageProps> = async ({
   );
 };
 
-export default LaunchPagPageage;
+export default LaunchPage;
 
 export const metadata = constructMetadata({
   title: "Launchpad | AgencyFlow",

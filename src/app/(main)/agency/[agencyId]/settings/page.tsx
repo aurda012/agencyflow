@@ -2,8 +2,8 @@ import React from "react";
 import { currentUser } from "@clerk/nextjs";
 import { redirect } from "next/navigation";
 
-import { getAuthUser } from "@/queries/auth";
-import { getAgencyDetails } from "@/queries/agency";
+import { getAuthUser } from "@/database/actions/auth.actions";
+import { getAgencyDetails } from "@/database/actions/agency.actions";
 
 import AgencyDetails from "@/components/forms/AgencyDetails";
 import UserDetailsForm from "@/components/forms/UserDetails";

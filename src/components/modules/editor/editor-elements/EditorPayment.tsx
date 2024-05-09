@@ -1,4 +1,4 @@
-'use client';
+"use client";
 
 import React from "react";
 import { useRouter } from "next/navigation";
@@ -9,8 +9,8 @@ import {
   EmbeddedCheckoutProvider,
 } from "@stripe/react-stripe-js";
 
-import { getSubAccountDetails } from "@/queries/subaccount";
-import { getFunnel } from "@/queries/funnels";
+import { getSubAccountDetails } from "@/database/actions/subaccount.actions";
+import { getFunnel } from "@/database/actions/funnel.actions";
 
 import { useEditor } from "@/hooks/use-editor";
 import { Badge } from "@/components/ui/badge";
@@ -26,12 +26,7 @@ interface EditorPaymentProps {
 
 const EditorPayment: React.FC<EditorPaymentProps> = ({ element }) => {
   const router = useRouter();
-  const {
-    editor: editorState,
-    dispatch,
-    funnelId,
-    subAccountId,
-  } = useEditor();
+  const { editor: editorState, dispatch, funnelId, subAccountId } = useEditor();
   const { editor } = editorState;
 
   const [clientSecret, setClientSecret] = React.useState<string>("");
@@ -105,7 +100,6 @@ const EditorPayment: React.FC<EditorPaymentProps> = ({ element }) => {
           descriptionClassName: "line-clamp-3",
         });
       }
-
     };
 
     getClientSecret();

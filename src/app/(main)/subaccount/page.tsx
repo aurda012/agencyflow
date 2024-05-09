@@ -1,7 +1,7 @@
 import React from "react";
-import { verifyInvitation } from "@/queries/invitations";
+import { verifyInvitation } from "@/database/actions/invitation.actions";
 import { redirect } from "next/navigation";
-import { getAuthUserDetails } from "@/queries/auth";
+import { getAuthUserDetails } from "@/database/actions/auth.actions";
 import Unauthorized from "@/components/common/Unauthorized";
 import { constructMetadata } from "@/lib/utils";
 

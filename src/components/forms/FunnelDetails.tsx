@@ -8,8 +8,8 @@ import { toast } from "sonner";
 import { v4 } from "uuid";
 import { type Funnel } from "@prisma/client";
 
-import { saveActivityLogsNotification } from "@/queries/notifications";
-import { upsertFunnel } from "@/queries/funnels";
+import { saveActivityLogsNotification } from "@/database/actions/notification.actions";
+import { upsertFunnel } from "@/database/actions/funnel.actions";
 
 import { useModal } from "@/hooks/use-modal";
 import {
@@ -31,9 +31,10 @@ import {
   type FunnelDetailsSchema,
   FunnelDetailsValidator,
 } from "@/lib/validators/funnel-details";
+import { IFunnel } from "@/database/models/funnel.model";
 
 interface FunnelDetailsProps {
-  defaultData?: Funnel;
+  defaultData?: IFunnel;
   subAccountId: string;
 }
 
@@ -72,9 +73,12 @@ const FunnelDetails: React.FC<FunnelDetailsProps> = ({
     if (!subAccountId) return;
 
     const response = await upsertFunnel(
-      subAccountId,
-      { ...values, liveProducts: defaultData?.liveProducts || "[]" },
-      defaultData?.id || v4()
+      {
+        ...values,
+        subAccount: subAccountId,
+        liveProducts: defaultData?.liveProducts || "[]",
+      },
+      defaultData?._id
     );
 
     await saveActivityLogsNotification({

@@ -6,7 +6,7 @@ import {
   getCharges,
   getPrices,
 } from "@/lib/stripe/stripe-actions";
-import { getAgencySubscription } from "@/queries/agency";
+import { getAgencySubscription } from "@/database/actions/agency.actions";
 
 import {
   Table,

@@ -5,8 +5,8 @@ import { useRouter } from "next/navigation";
 import { Draggable, Droppable } from "react-beautiful-dnd";
 import { Edit, MoreVertical, PlusCircleIcon, Trash } from "lucide-react";
 
-import { deleteLane } from "@/queries/lanes";
-import { saveActivityLogsNotification } from "@/queries/notifications";
+import { deleteLane } from "@/database/actions/lane.actions";
+import { saveActivityLogsNotification } from "@/database/actions/notification.actions";
 
 import { useModal } from "@/hooks/use-modal";
 import {
@@ -40,13 +40,15 @@ import type {
   TicketsWithTags,
 } from "@/lib/types";
 import { toast } from "sonner";
+import { ILane } from "@/database/models/lane.model";
+import { ITicket } from "@/database/models/ticket.model";
 
 interface PipelaneLaneProps {
   setAllTickets: React.Dispatch<React.SetStateAction<TicketsWithTags>>;
   allTickets: TicketsWithTags;
   tickets: TicketsWithTags;
   pipelineId: string;
-  laneDetails: LaneDetailsType;
+  laneDetails: ILane;
   subAccountId: string;
   index: number;
 }
@@ -82,7 +84,7 @@ const PipelineLane: React.FC<PipelaneLaneProps> = ({
       >
         <TicketDetails
           getNewTicket={addNewTicket}
-          laneId={laneDetails.id}
+          laneId={laneDetails._id}
           subAccountId={subAccountId}
         />
       </CustomModal>
@@ -99,7 +101,7 @@ const PipelineLane: React.FC<PipelaneLaneProps> = ({
 
   const handleDeleteLane = async () => {
     try {
-      const response = await deleteLane(laneDetails.id);
+      const response = await deleteLane(laneDetails._id);
 
       await saveActivityLogsNotification({
         agencyId: undefined,
@@ -121,9 +123,9 @@ const PipelineLane: React.FC<PipelaneLaneProps> = ({
 
   return (
     <Draggable
-      draggableId={laneDetails.id.toString()}
+      draggableId={laneDetails._id.toString()}
       index={index}
-      key={laneDetails.id}
+      key={laneDetails._id}
     >
       {(provided, snapshot) => {
         if (snapshot.isDragging) {
@@ -176,8 +178,8 @@ const PipelineLane: React.FC<PipelaneLaneProps> = ({
                   </div>
 
                   <Droppable
-                    droppableId={laneDetails.id.toString()}
-                    key={laneDetails.id}
+                    droppableId={laneDetails._id.toString()}
+                    key={laneDetails._id}
                     type="ticket"
                     isDropDisabled={false}
                   >
@@ -187,13 +189,13 @@ const PipelineLane: React.FC<PipelaneLaneProps> = ({
                         {...provided.droppableProps}
                         ref={provided.innerRef}
                       >
-                        {tickets.map((ticket, index) => (
+                        {tickets.map((ticket: ITicket, index: number) => (
                           <PipelineTicket
                             allTickets={allTickets}
                             setAllTickets={setAllTickets}
                             subAccountId={subAccountId}
                             ticket={ticket}
-                            key={ticket.id.toString()}
+                            key={ticket._id.toString()}
                             index={index}
                           />
                         ))}

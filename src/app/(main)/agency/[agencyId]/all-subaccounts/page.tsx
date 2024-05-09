@@ -4,7 +4,7 @@ import Image from "next/image";
 import { redirect } from "next/navigation";
 import { PlusCircle } from "lucide-react";
 
-import { getAuthUserDetails } from "@/queries/auth";
+import { getAuthUserDetails } from "@/database/actions/auth.actions";
 
 import {
   AlertDialog,
@@ -28,6 +28,7 @@ import { Button } from "@/components/ui/button";
 import DeleteButton from "./_components/DeleteButton";
 import CreateButton from "./_components/CreateButton";
 import { constructMetadata } from "@/lib/utils";
+import { ISubAccount } from "@/database/models/subaccount.model";
 
 interface AllSubAccountsPageProps {
   params: {
@@ -57,55 +58,61 @@ const AllSubAccountsPage: React.FC<AllSubAccountsPageProps> = async ({
             <CommandEmpty>No results found.</CommandEmpty>
             <CommandGroup heading="Sub Accounts">
               {!!user.agency?.subAccounts.length ? (
-                user.agency.subAccounts.map((subAccount) => (
-                  <CommandItem
-                    key={subAccount.id}
-                    className="h-32 bg-background my-2 text-primary border border-border p-4 cursor-pointer"
-                  >
-                    <Link
-                      href={`/subaccount/${subAccount.id}`}
-                      className="flex gap-4 w-full h-full"
+                user.agency.subAccounts.map(
+                  (subAccount: Partial<ISubAccount>) => (
+                    <CommandItem
+                      key={subAccount._id}
+                      className="h-32 bg-background my-2 text-primary border border-border p-4 cursor-pointer"
                     >
-                      <div className="relative w-28 h-2w-28">
-                        <Image
-                          src={subAccount.subAccountLogo}
-                          alt="Subaccount logo"
-                          fill
-                          className="rounded-md object-contain bg-muted/50 p-4"
-                        />
-                      </div>
-                      <div className="flex flex-col justify-between">
-                        <div className="flex flex-col">
-                          {subAccount.name}
-                          <span className="text-muted-foreground text-xs">
-                            {subAccount.address}
-                          </span>
+                      <Link
+                        href={`/subaccount/${subAccount._id}`}
+                        className="flex gap-4 w-full h-full"
+                      >
+                        <div className="relative w-28 h-2w-28">
+                          <Image
+                            src={subAccount.subAccountLogo || ""}
+                            alt="Subaccount logo"
+                            fill
+                            className="rounded-md object-contain bg-muted/50 p-4"
+                          />
                         </div>
-                      </div>
-                    </Link>
-                    <AlertDialogTrigger asChild>
-                      <Button size="sm" variant="destructive" className="w-20">
-                        Delete
-                      </Button>
-                    </AlertDialogTrigger>
-                    <AlertDialogContent>
-                      <AlertDialogHeader>
-                        <AlertDialogTitle className="text-left">
-                          Are you absolutely sure?
-                        </AlertDialogTitle>
-                        <AlertDialogDescription>
-                          This action cannot be undone. This will permanently
-                          delete the subaccount and all data related to
-                          subaccount.
-                        </AlertDialogDescription>
-                      </AlertDialogHeader>
-                      <AlertDialogFooter className="flex items-center">
-                        <AlertDialogCancel>Cancel</AlertDialogCancel>
-                        <DeleteButton subAccountId={subAccount.id} />
-                      </AlertDialogFooter>
-                    </AlertDialogContent>
-                  </CommandItem>
-                ))
+                        <div className="flex flex-col justify-between">
+                          <div className="flex flex-col">
+                            {subAccount.name}
+                            <span className="text-muted-foreground text-xs">
+                              {subAccount.address}
+                            </span>
+                          </div>
+                        </div>
+                      </Link>
+                      <AlertDialogTrigger asChild>
+                        <Button
+                          size="sm"
+                          variant="destructive"
+                          className="w-20"
+                        >
+                          Delete
+                        </Button>
+                      </AlertDialogTrigger>
+                      <AlertDialogContent>
+                        <AlertDialogHeader>
+                          <AlertDialogTitle className="text-left">
+                            Are you absolutely sure?
+                          </AlertDialogTitle>
+                          <AlertDialogDescription>
+                            This action cannot be undone. This will permanently
+                            delete the subaccount and all data related to
+                            subaccount.
+                          </AlertDialogDescription>
+                        </AlertDialogHeader>
+                        <AlertDialogFooter className="flex items-center">
+                          <AlertDialogCancel>Cancel</AlertDialogCancel>
+                          <DeleteButton subAccountId={subAccount._id} />
+                        </AlertDialogFooter>
+                      </AlertDialogContent>
+                    </CommandItem>
+                  )
+                )
               ) : (
                 <div className="text-muted-foreground text-center p-4">
                   No subaccounts

@@ -5,8 +5,8 @@ import Stripe from "stripe";
 import { format } from "date-fns";
 import { Clipboard, Contact2, DollarSign, ShoppingCart } from "lucide-react";
 
-import { getSubAccountDetails } from "@/queries/subaccount";
-import { getFunnels } from "@/queries/funnels";
+import { getSubAccountDetails } from "@/database/actions/subaccount.actions";
+import { getFunnels } from "@/database/actions/funnel.actions";
 
 import { AreaChart } from "@/components/ui/area-chart";
 import {
@@ -34,6 +34,8 @@ import BlurPage from "@/components/common/BlurPage";
 import { stripe } from "@/lib/stripe";
 import { constructMetadata } from "@/lib/utils";
 import Unauthorized from "@/components/common/Unauthorized";
+import { IFunnel } from "@/database/models/funnel.model";
+import { IFunnelPage } from "@/database/models/funnelpage.model";
 
 interface SubAccountPageIdProps {
   params: {
@@ -123,10 +125,10 @@ const SubAccountPageId: React.FC<SubAccountPageIdProps> = async ({
 
   const funnels = await getFunnels(subaccountId);
 
-  const funnelPerformanceMetrics = funnels.map((funnel) => ({
+  const funnelPerformanceMetrics = funnels.map((funnel: any) => ({
     ...funnel,
     totalFunnelVisits: funnel.funnelPages.reduce(
-      (total, page) => total + page.visits,
+      (total: any, page: any) => total + page.visits,
       0
     ),
   }));
@@ -143,7 +145,7 @@ const SubAccountPageId: React.FC<SubAccountPageIdProps> = async ({
                   You need to connect your stripe account to see metrics
                 </CardDescription>
                 <Link
-                  href={`/subaccount/${subAccountDetails.id}/launchpad`}
+                  href={`/subaccount/${subAccountDetails._id}/launchpad`}
                   className="p-2 w-fit bg-secondary text-white rounded-md flex items-center gap-2"
                 >
                   <Clipboard />

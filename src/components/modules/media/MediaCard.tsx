@@ -8,8 +8,8 @@ import { toast } from "sonner";
 import { format } from "date-fns";
 import { type Media } from "@prisma/client";
 
-import { deleteMedia } from "@/queries/media";
-import { saveActivityLogsNotification } from "@/queries/notifications";
+import { deleteMedia } from "@/database/actions/media.actions";
+import { saveActivityLogsNotification } from "@/database/actions/notification.actions";
 
 import {
   AlertDialog,
@@ -31,9 +31,10 @@ import {
   DropdownMenuTrigger,
 } from "../../ui/dropdown-menu";
 import { useModal } from "@/hooks/use-modal";
+import { IMedia } from "@/database/models/media.model";
 
 interface MediaCardProps {
-  file: Media;
+  file: IMedia;
 }
 
 const MediaCard: React.FC<MediaCardProps> = ({ file }) => {
@@ -44,7 +45,7 @@ const MediaCard: React.FC<MediaCardProps> = ({ file }) => {
   const handleDelete = async () => {
     setIsLoading(true);
 
-    const response = await deleteMedia(file.id);
+    const response = await deleteMedia(file._id);
 
     await saveActivityLogsNotification({
       agencyId: undefined,
@@ -55,7 +56,7 @@ const MediaCard: React.FC<MediaCardProps> = ({ file }) => {
     toast.success("Deleted File", {
       description: "Successfully deleted the file",
     });
-    
+
     setIsLoading(false);
     setClose();
     router.refresh();

@@ -1,11 +1,12 @@
 import React from "react";
 import { notFound, redirect } from "next/navigation";
 
-import { getDomainContent } from "@/queries/domain";
-import { updateFunnelPageVisits } from "@/queries/funnels";
+import { getDomainContent } from "@/database/actions/funnel.actions";
+import { updateFunnelPageVisits } from "@/database/actions/funnel.actions";
 
 import EditorProvider from "@/components/providers/EditorProvider";
 import FunnelEditor from "@/components/modules/editor/FunnelEditor";
+import { IFunnelPage } from "@/database/models/funnelpage.model";
 
 interface DomainPageProps {
   params: {
@@ -22,20 +23,22 @@ const DomainPage: React.FC<DomainPageProps> = async ({ params }) => {
 
   if (!domainData) notFound();
 
-  const pageData = domainData.funnelPages.find((page) => !page.pathName);
+  const pageData = domainData.funnelPages.find(
+    (page: Partial<IFunnelPage>) => !page.pathName
+  );
 
   if (!pageData) notFound();
 
-  await updateFunnelPageVisits(pageData.id);
+  await updateFunnelPageVisits(pageData._id);
 
   return (
     <EditorProvider
       subAccountId={domainData.subAccountId}
       pageDetails={pageData}
-      funnelId={domainData.id}
+      funnelId={domainData._id}
     >
       <FunnelEditor
-        funnelPageId={pageData.id}
+        funnelPageId={pageData._id}
         funnelPageDetails={pageData}
         liveMode
       />

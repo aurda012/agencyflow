@@ -3,14 +3,16 @@ import { redirect } from "next/navigation";
 import { currentUser } from "@clerk/nextjs";
 import { Role } from "@prisma/client";
 
-import { verifyInvitation } from "@/queries/invitations";
-import { getAuthUserDetails } from "@/queries/auth";
-import { getNotifications } from "@/queries/notifications";
+import { verifyInvitation } from "@/database/actions/invitation.actions";
+import { getAuthUserDetails } from "@/database/actions/auth.actions";
+import { getNotifications } from "@/database/actions/notification.actions";
 
 import Sidebar from "@/components/modules/sidebar/Sidebar";
 import InfoBar from "@/components/common/InfoBar";
 
 import { NotificationsWithUser } from "@/lib/types";
+import { IPermission } from "@/database/models/permission.model";
+import { INotification } from "@/database/models/notification.model";
 
 interface SubAccountIdLayoutProps {
   children: React.ReactNode;
@@ -43,7 +45,7 @@ const SubAccountIdLayout: React.FC<SubAccountIdLayoutProps> = async ({
   const authUser = await getAuthUserDetails();
   console.log(authUser);
   const hasPermission = authUser?.permissions.find(
-    (permission) =>
+    (permission: Partial<IPermission>) =>
       permission.access && permission.subAccountId === subaccountId
   );
   if (!hasPermission) {
@@ -55,13 +57,14 @@ const SubAccountIdLayout: React.FC<SubAccountIdLayoutProps> = async ({
     const allNotifications = await getNotifications(verify.agencyId as string);
 
     if (
-      user.privateMetadata.role === Role.AGENCY_ADMIN ||
-      user.privateMetadata.role === Role.AGENCY_OWNER
+      user.privateMetadata.role === "AGENCY_ADMIN" ||
+      user.privateMetadata.role === "AGENCY_OWNER"
     ) {
       notifications = allNotifications;
     } else {
       const filteredNotifications = allNotifications?.filter(
-        (notification) => notification.subAccountId === subaccountId
+        (notification: INotification) =>
+          notification.subAccount === subaccountId
       );
       if (filteredNotifications) notifications = filteredNotifications;
     }

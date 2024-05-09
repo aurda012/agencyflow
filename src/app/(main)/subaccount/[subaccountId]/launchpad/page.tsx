@@ -7,7 +7,7 @@ import { CheckCircle2 } from "lucide-react";
 import {
   getSubAccountDetails,
   updateSubAccountConnectedId,
-} from "@/queries/subaccount";
+} from "@/database/actions/subaccount.actions";
 
 import {
   Card,
@@ -57,7 +57,7 @@ const LaunchpadPage: React.FC<LaunchpadPageProps> = async ({
 
   const stripeOAuthLink = getStripeOAuthLink(
     "subaccount",
-    `launchpad___${subAccountDetails.id}`
+    `launchpad___${subAccountDetails._id}`
   );
   let connectedStripeAccount: boolean = false;
 
@@ -156,7 +156,7 @@ const LaunchpadPage: React.FC<LaunchpadPageProps> = async ({
                 ) : (
                   <Link
                     className={buttonVariants()}
-                    href={`/subaccount/${subAccountDetails.id}/settings`}
+                    href={`/subaccount/${subAccountDetails._id}/settings`}
                   >
                     Start
                   </Link>

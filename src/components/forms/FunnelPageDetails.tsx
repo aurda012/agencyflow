@@ -9,12 +9,12 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { v4 as uuidv4 } from "uuid";
 import { type FunnelPage } from "@prisma/client";
 
-import { saveActivityLogsNotification } from "@/queries/notifications";
+import { saveActivityLogsNotification } from "@/database/actions/notification.actions";
 import {
   upsertFunnelPage,
   getFunnels,
   deleteFunnelPage,
-} from "@/queries/funnels";
+} from "@/database/actions/funnel.actions";
 
 import { useModal } from "@/hooks/use-modal";
 import {
@@ -46,9 +46,10 @@ import {
   type FunnelPageDetailsSchema,
   FunnelPageDetailsValidator,
 } from "@/lib/validators/funnel-page-details";
+import { IFunnelPage } from "@/database/models/funnelpage.model";
 
 interface FunnelPageDetailsProps {
-  defaultData?: FunnelPage;
+  defaultData?: IFunnelPage;
   funnelId: string;
   order: number;
   subAccountId: string;
@@ -88,7 +89,7 @@ const FunnelPageDetails: React.FC<FunnelPageDetailsProps> = ({
     try {
       const response = await upsertFunnelPage(subAccountId, funnelId, {
         ...values,
-        id: defaultData?.id || uuidv4(),
+        id: defaultData?._id || uuidv4(),
         order: defaultData?.order || order,
         pathName: values.pathName || "",
       });
@@ -113,9 +114,9 @@ const FunnelPageDetails: React.FC<FunnelPageDetailsProps> = ({
   };
 
   const handleDeleteFunnelPage = async () => {
-    if (!defaultData?.id) return null;
+    if (!defaultData?._id) return null;
 
-    const response = await deleteFunnelPage(defaultData.id);
+    const response = await deleteFunnelPage(defaultData._id);
 
     await saveActivityLogsNotification({
       agencyId: undefined,
@@ -133,8 +134,9 @@ const FunnelPageDetails: React.FC<FunnelPageDetailsProps> = ({
   const handleCopyFunnelPage = async () => {
     const response = await getFunnels(subAccountId);
 
-    const lastFunnelPage = response.find((funnel) => funnel.id === funnelId)
-      ?.funnelPages.length;
+    const lastFunnelPage = response.find(
+      (funnel: any) => funnel._id === funnelId
+    )?.funnelPages.length;
 
     await upsertFunnelPage(subAccountId, funnelId, {
       ...defaultData,
@@ -223,7 +225,7 @@ const FunnelPageDetails: React.FC<FunnelPageDetailsProps> = ({
                 )}
               />
               <div className="flex justify-end w-full items-center gap-2">
-                {defaultData?.id && (
+                {defaultData?._id && (
                   <>
                     <Tooltip>
                       <TooltipTrigger asChild>

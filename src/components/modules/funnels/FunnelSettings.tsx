@@ -3,7 +3,7 @@ import { type Funnel } from "@prisma/client";
 import { redirect } from "next/navigation";
 
 import { getConnectAccountProducts } from "@/lib/stripe/stripe-actions";
-import { getSubAccountDetails } from "@/queries/subaccount";
+import { getSubAccountDetails } from "@/database/actions/subaccount.actions";
 
 import FunnelDetails from "@/components/forms/FunnelDetails";
 import {
@@ -14,10 +14,11 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import FunnelProductsTable from "./FunnelProductsTable";
+import { IFunnel } from "@/database/models/funnel.model";
 
 interface FunnelSettingsProps {
   subAccountId: string;
-  defaultData: Funnel;
+  defaultData: IFunnel;
 }
 
 const FunnelSettings: React.FC<FunnelSettingsProps> = async ({

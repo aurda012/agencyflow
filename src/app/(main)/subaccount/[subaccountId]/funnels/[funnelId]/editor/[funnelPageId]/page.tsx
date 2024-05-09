@@ -1,7 +1,7 @@
 import React from "react";
 import { redirect } from "next/navigation";
 
-import { getFunnelPageDetails } from "@/queries/funnels";
+import { getFunnelPageDetails } from "@/database/actions/funnel.actions";
 
 import EditorProvider from "@/components/providers/EditorProvider";
 import FunnelEditorNavigation from "@/components/modules/editor/FunnelEditorNavigation";
